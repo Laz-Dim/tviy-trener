@@ -393,6 +393,25 @@ footer {
 
 @media (max-width: 768px) {
     #hero h1 { font-size: 40px; letter-spacing: 4px; }
-    nav { flex-direction: column; padding: 20px; }
-    nav ul { gap: 15px; }
+    nav { 
+        padding: 20px; 
+        flex-direction: column;
+        gap: 20px;
+    }
+    nav ul { 
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        width: 100%;
+        text-align: center;
+        padding: 0;
+    }
+    nav ul li a {
+        font-size: 11px;
+        display: block;
+    }
+    .nav-cta {
+        grid-column: span 2;
+        text-align: center;
+    }
 }
