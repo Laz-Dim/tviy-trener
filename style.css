@@ -201,14 +201,15 @@ h2::after {
 /* Video Gallery */
 .video-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-    gap: 30px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
 }
 
 .video-item {
     background: #000;
     border-radius: 8px;
     overflow: hidden;
+    aspect-ratio: 16 / 9;
 }
 
 /* Blog */
@@ -387,7 +388,7 @@ footer {
 
 @media (max-width: 992px) {
     #hero h1 { font-size: 60px; }
-    .video-grid { grid-template-columns: 1fr; }
+    .video-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 768px) {
