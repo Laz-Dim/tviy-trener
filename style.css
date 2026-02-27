@@ -377,6 +377,24 @@ blockquote {
     color: var(--text-white);
 }
 
+/* Social Icons */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+
+.social-icons a {
+    font-size: 32px;
+    color: var(--text-white);
+    transition: 0.3s;
+}
+
+.social-icons a:hover {
+    color: var(--accent);
+    transform: translateY(-3px);
+}
+
 footer {
     padding: 40px;
     background: #000;
