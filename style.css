@@ -89,7 +89,7 @@ nav ul li a:hover {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(15,15,15,1)), url('img_in/photo_2026-02-28_01-09-16.jpg');
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(15,15,15,1)), url('img_new/illya_01.jpg');
     background-size: cover;
     background-position: center;
 }
