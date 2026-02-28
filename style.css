@@ -584,6 +584,12 @@ footer {
         grid-template-columns: 1fr;
         gap: 15px;
     }
+    .video-item:nth-child(n+4) {
+        display: none;
+    }
+    #videos p {
+        text-align: center;
+    }
     .desktop-br {
         display: none;
     }
