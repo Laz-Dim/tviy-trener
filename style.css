@@ -1,3 +1,10 @@
+/* 
+   Project: Tviy Trener
+   Version: v1.01
+   Author: Klava (AI Assistant)
+   Date: 2026-02-28
+*/
+
 :root {
     --bg-dark: #0f0f0f;
     --bg-card: #1a1a1a;
@@ -82,9 +89,60 @@ nav ul li a:hover {
     align-items: center;
     justify-content: center;
     text-align: center;
-    background: linear-gradient(to bottom, rgba(0,0,0,0.7), rgba(15,15,15,1)), url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&q=80&w=1920');
+    background: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(15,15,15,1)), url('img_in/photo_2026-02-28_01-09-16.jpg');
     background-size: cover;
     background-position: center;
+}
+
+/* Gallery Section v1.01 */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.gallery-item {
+    border-radius: 8px;
+    overflow: hidden;
+    height: 300px;
+    border: 1px solid var(--border);
+    transition: 0.4s;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.6) contrast(1.2) grayscale(0.4);
+    transition: 0.5s ease-in-out;
+}
+
+.gallery-item:hover img {
+    filter: brightness(1) contrast(1) grayscale(0);
+    transform: scale(1.05);
+}
+
+.gallery-item:hover {
+    border-color: var(--accent);
+}
+
+/* Featured Blog Images v1.01 */
+.featured-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    filter: brightness(0.7) contrast(1.1);
+}
+
+@media (max-width: 768px) {
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .gallery-item {
+        height: 180px;
+    }
 }
 
 #hero h1 {
