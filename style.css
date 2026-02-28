@@ -511,23 +511,57 @@ footer {
 
 @media (max-width: 768px) {
     header {
-        position: static;
+        position: relative !important;
+        background: #000;
+        padding: 10px 0;
+    }
+    nav { 
+        padding: 0 20px; 
+        flex-direction: column;
+        gap: 15px;
+    }
+    nav ul { 
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        width: 100%;
+        text-align: center;
+        padding: 0;
+    }
+    nav ul li a {
+        font-size: 11px;
+        display: block;
+        padding: 5px 0;
+    }
+    .nav-cta {
+        grid-column: span 2;
+        text-align: center;
+        width: 100%;
     }
     #hero {
         height: auto;
-        min-height: 100vh;
-        padding: 40px 0 60px;
+        min-height: 80vh;
+        padding: 40px 20px 60px;
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url('img_new/illya_01.jpg');
+        background-size: cover;
+        background-position: center;
     }
     #hero h1 { 
-        font-size: 32px; 
+        font-size: 42px; 
+        color: #fff !important;
+        text-shadow: 2px 2px 10px rgba(0,0,0,1);
         letter-spacing: 2px;
         line-height: 1.1;
+        margin-top: 0;
     }
     #hero .subtitle {
-        font-size: 18px;
+        font-size: 20px;
+        color: var(--accent);
+        text-shadow: 1px 1px 5px rgba(0,0,0,0.8);
     }
     #hero .description {
-        font-size: 14px;
+        font-size: 15px;
+        color: #eee;
         margin-bottom: 20px;
     }
     section {
@@ -540,27 +574,6 @@ footer {
     .video-grid {
         grid-template-columns: 1fr;
         gap: 15px;
-    }
-    nav { 
-        padding: 10px; 
-        flex-direction: column;
-        gap: 10px;
-    }
-    nav ul { 
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        width: 100%;
-        text-align: center;
-        padding: 0;
-    }
-    nav ul li a {
-        font-size: 10px;
-        display: block;
-    }
-    .nav-cta {
-        grid-column: span 2;
-        text-align: center;
     }
     .desktop-br {
         display: none;
