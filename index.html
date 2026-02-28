@@ -257,11 +257,15 @@
                 body: JSON.stringify({ chat_id: chatId, text: text })
             })
             .then(response => {
+                console.log('Telegram API response:', response);
                 if (response.ok) {
                     status.innerText = 'Дякуємо! Ваша заявка прийнята. Ілля зв\'яжеться з вами найближчим часом.';
                     e.target.reset();
                 } else {
-                    status.innerText = 'Помилка при відправці. Спробуйте пізніше або зателефонуйте нам.';
+                    response.json().then(data => {
+                        console.error('Telegram error details:', data);
+                        status.innerText = `Помилка: ${data.description || 'невідома помилка'}`;
+                    });
                 }
             })
             .catch(() => {
