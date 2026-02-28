@@ -62,6 +62,20 @@
         </div>
     </section>
 
+    <section id="education">
+        <div class="container">
+            <h2>Освіта та сертифікати</h2>
+            <div class="edu-container">
+                <div class="edu-text">
+                    <p>Маю дві вищі освіти, зокрема у сфері фізичного виховання та спорту. Постійно вдосконалюю свої знання, щоб надавати клієнтам найактуальнішу та найбезпечнішу методику тренувань.</p>
+                </div>
+                <div class="diploma-preview">
+                    <img src="img_new/diplom_watermark.jpg" alt="Диплом тренера" class="zoomable-img">
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section id="services">
         <div class="container">
             <h2>Напрямки роботи</h2>
@@ -75,8 +89,8 @@
                     <p>Розвиток швидкості, координації та впевненості. Робота на мішку та спаринги з тренером.</p>
                 </div>
                 <div class="service-card">
-                    <h3>Реабілітація спини</h3>
-                    <p>Спеціальні вправи для розвантаження хребта при грижах, протрузіях та остеохондрозі.</p>
+                    <h3>ЗФП</h3>
+                    <p>Загальна фізична підготовка для будь-якого віку та рівня фізичної форми.</p>
                 </div>
                 <div class="service-card">
                     <h3>Харчування</h3>
@@ -86,17 +100,17 @@
         </div>
     </section>
 
-    <!-- Gallery Section v1.01 -->
+    <!-- Gallery Section v1.03 -->
     <section id="gallery">
         <div class="container">
             <h2>Атмосфера залу</h2>
             <div class="gallery-grid">
-                <div class="gallery-item"><img src="img_in/photo_1_2026-02-28_01-09-46.jpg" alt="Тренування 1"></div>
-                <div class="gallery-item"><img src="img_in/photo_2_2026-02-28_01-09-46.jpg" alt="Тренування 2"></div>
-                <div class="gallery-item"><img src="img_in/photo_3_2026-02-28_01-09-46.jpg" alt="Тренування 3"></div>
-                <div class="gallery-item"><img src="img_in/photo_4_2026-02-28_01-09-46.jpg" alt="Тренування 4"></div>
-                <div class="gallery-item"><img src="img_in/photo_5_2026-02-28_01-09-46.jpg" alt="Тренування 5"></div>
-                <div class="gallery-item"><img src="img_in/photo_6_2026-02-28_01-09-46.jpg" alt="Тренування 6"></div>
+                <div class="gallery-item"><img src="img_new/gym_01.jpg" alt="Тренування 1"></div>
+                <div class="gallery-item"><img src="img_new/gym_02.jpg" alt="Тренування 2"></div>
+                <div class="gallery-item"><img src="img_new/gym_03.jpg" alt="Тренування 3"></div>
+                <div class="gallery-item"><img src="img_new/boxing_01.jpg" alt="Тренування 4"></div>
+                <div class="gallery-item"><img src="img_new/illya_02.jpg" alt="Тренування 5"></div>
+                <div class="gallery-item"><img src="img_new/gym_04.jpg" alt="Тренування 6"></div>
             </div>
         </div>
     </section>
@@ -219,8 +233,6 @@
             const status = document.getElementById('formStatus');
             status.innerText = 'Надсилаємо...';
             
-            // На реальному сайті тут буде запит до сервера. 
-            // Для демо-версії виводимо успішне повідомлення.
             setTimeout(() => {
                 status.innerText = 'Дякуємо! Ваша заявка прийнята. Ілля зв\'яжеться з вами найближчим часом.';
                 e.target.reset();

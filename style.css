@@ -1,8 +1,8 @@
 /* 
    Project: Tviy Trener
-   Version: v1.01
+   Version: v1.03
    Author: Klava (AI Assistant)
-   Date: 2026-02-28
+   Date: 2026-03-02
 */
 
 :root {
@@ -209,6 +209,48 @@ h2::after {
     height: 4px;
     background: var(--accent);
     margin: 20px auto 0;
+}
+
+/* Education Section v1.03 */
+.edu-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    background: var(--bg-card);
+    padding: 50px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+
+.edu-text p {
+    font-size: 18px;
+    color: var(--text-gray);
+    text-align: left;
+}
+
+.diploma-preview {
+    overflow: hidden;
+    border-radius: 8px;
+    border: 2px solid var(--accent);
+    cursor: pointer;
+}
+
+.zoomable-img {
+    width: 100%;
+    height: auto;
+    transition: 0.5s ease-in-out;
+}
+
+.zoomable-img:hover {
+    transform: scale(1.15);
+}
+
+@media (max-width: 768px) {
+    .edu-container {
+        grid-template-columns: 1fr;
+        padding: 30px;
+    }
 }
 
 /* Philosophy Cards */
