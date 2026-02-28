@@ -242,10 +242,31 @@
             const status = document.getElementById('formStatus');
             status.innerText = 'Надсилаємо...';
             
-            setTimeout(() => {
-                status.innerText = 'Дякуємо! Ваша заявка прийнята. Ілля зв\'яжеться з вами найближчим часом.';
-                e.target.reset();
-            }, 1000);
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const goal = document.getElementById('goal').options[document.getElementById('goal').selectedIndex].text;
+            const message = document.getElementById('message').value;
+
+            const token = '8506794921:AAHIrLIDtRhgXPmEXdIhY6vUKO7WGXIOuvU';
+            const chatId = '143220916';
+            const text = `🚀 Нова заявка з сайту!\n\n👤 Ім'я: ${name}\n📞 Телефон: ${phone}\n🎯 Ціль: ${goal}\n💬 Повідомлення: ${message}`;
+
+            fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: chatId, text: text })
+            })
+            .then(response => {
+                if (response.ok) {
+                    status.innerText = 'Дякуємо! Ваша заявка прийнята. Ілля зв\'яжеться з вами найближчим часом.';
+                    e.target.reset();
+                } else {
+                    status.innerText = 'Помилка при відправці. Спробуйте пізніше або зателефонуйте нам.';
+                }
+            })
+            .catch(() => {
+                status.innerText = 'Помилка мережі. Перевірте з\'єднання.';
+            });
         });
     </script>
 </body>
