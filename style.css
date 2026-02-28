@@ -510,6 +510,11 @@ footer {
 }
 
 @media (max-width: 768px) {
+    #hero {
+        height: auto;
+        min-height: 100vh;
+        padding: 120px 0 60px;
+    }
     #hero h1 { 
         font-size: 32px; 
         letter-spacing: 2px;
