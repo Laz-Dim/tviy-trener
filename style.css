@@ -554,4 +554,7 @@ footer {
         grid-column: span 2;
         text-align: center;
     }
+    .desktop-br {
+        display: none;
+    }
 }
