@@ -590,6 +590,16 @@ footer {
     #videos p {
         text-align: center;
     }
+    .contact-info p {
+        font-size: 16px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .contact-info a {
+        display: inline-block;
+        white-space: nowrap;
+    }
     .desktop-br {
         display: none;
     }
