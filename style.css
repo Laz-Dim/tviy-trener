@@ -161,10 +161,11 @@ nav ul li a:hover {
 }
 
 #hero .description {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto 30px;
     font-size: 18px;
     color: var(--text-gray);
+    line-height: 1.8;
 }
 
 .cta-button {
