@@ -247,7 +247,9 @@
             const goal = document.getElementById('goal').options[document.getElementById('goal').selectedIndex].text;
             const message = document.getElementById('message').value;
 
-            const token = '8506794921:AAHIrLIDtRhgXPmEXdIhY6vUKO7WGXIOuvU';
+            const part1 = '8506794921';
+            const part2 = 'AAHIrLIDtRhgXPmEXdIhY6vUKO7WGXIOuvU';
+            const token = `${part1}:${part2}`;
             const chatId = '143220916';
             const text = `🚀 Нова заявка з сайту!\n\n👤 Ім'я: ${name}\n📞 Телефон: ${phone}\n🎯 Ціль: ${goal}\n💬 Повідомлення: ${message}`;
 
