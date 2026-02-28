@@ -544,7 +544,7 @@ footer {
     #hero {
         height: auto;
         min-height: 80vh;
-        padding: 180px 20px 60px;
+        padding: 240px 20px 60px;
         background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url('img_new/illya_01.jpg');
         background-size: cover;
         background-position: center;
