@@ -304,16 +304,27 @@
             const part1 = '8506794921';
             const part2 = 'AAHIrLIDtRhgXPmEXdIhY6vUKO7WGXIOuvU';
             const token = `${part1}:${part2}`;
-            const chatId = '143220916';
+            const chatIdDimon = '143220916';
+            const chatIdTrainer = '5192950042';
             const text = `🚀 Нова заявка з сайту!\n\n👤 Ім'я: ${name}\n📞 Телефон: ${phone}\n🎯 Ціль: ${goal}\n💬 Повідомлення: ${message}`;
 
+            // Відправляємо повідомлення Dimon
             fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: chatId, text: text })
+                body: JSON.stringify({ chat_id: chatIdDimon, text: text })
             })
             .then(response => {
-                console.log('Telegram API response:', response);
+                console.log('Telegram API response (Dimon):', response);
+                // Відправляємо повідомлення тренеру
+                return fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: chatIdTrainer, text: text })
+                });
+            })
+            .then(response => {
+                console.log('Telegram API response (Trainer):', response);
                 if (response.ok) {
                     status.innerText = 'Дякуємо! Ваша заявка прийнята. Ілля зв\'яжеться з вами найближчим часом.';
                     e.target.reset();
