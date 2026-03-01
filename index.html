@@ -195,10 +195,13 @@
             <div class="form-wrapper">
                 <form id="trainerForm">
                     <div class="input-group">
-                        <input type="text" id="name" name="name" placeholder="Твоє ім'я" required>
+                        <input type="text" id="name" name="name" placeholder="Твоє ім'я *" required>
                     </div>
                     <div class="input-group">
-                        <input type="tel" id="phone" name="phone" placeholder="Твій номер телефону" required>
+                        <input type="tel" id="phone" name="phone" placeholder="+380 (__) ___-__-__ *" 
+                               inputmode="numeric" 
+                               pattern="[\+0-9\s\-\(\)]+"
+                               required>
                     </div>
                     <div class="input-group">
                         <select id="goal" name="goal">
@@ -237,6 +240,29 @@
     </footer>
 
     <script>
+        // Проста маска для телефону
+        const phoneInput = document.getElementById('phone');
+        phoneInput.addEventListener('input', function (e) {
+            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+            if (!x[1]) {
+                e.target.value = '';
+                return;
+            }
+            // Форматування для України (38...)
+            let val = '';
+            if (x[1] === '38') {
+                val = '+38';
+                if (x[2]) val += ' (' + x[2];
+                if (x[3]) val += ') ' + x[3];
+                if (x[4]) val += '-' + x[4];
+                if (x[5]) val += '-' + x[5];
+            } else {
+                // Якщо починають не з 38, просто дозволяємо ввід цифр
+                val = e.target.value.replace(/[^\d+]/g, '');
+            }
+            e.target.value = val;
+        });
+
         document.getElementById('trainerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const status = document.getElementById('formStatus');
