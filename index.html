@@ -195,13 +195,16 @@
             <div class="form-wrapper">
                 <form id="trainerForm">
                     <div class="input-group">
-                        <input type="text" id="name" name="name" placeholder="Твоє ім'я *" required>
+                        <input type="text" id="name" name="name" placeholder="Твоє ім'я *" 
+                               oninvalid="this.setCustomValidity('Будь ласка, введіть ваше ім\'я')" 
+                               oninput="this.setCustomValidity('')" required>
                     </div>
                     <div class="input-group">
                         <input type="tel" id="phone" name="phone" placeholder="+380 (__) ___-__-__ *" 
                                inputmode="numeric" 
                                pattern="[\+0-9\s\-\(\)]+"
-                               required>
+                               oninvalid="this.setCustomValidity('Будь ласка, введіть коректний номер телефону')" 
+                               oninput="this.setCustomValidity('')" required>
                     </div>
                     <div class="input-group">
                         <select id="goal" name="goal">
