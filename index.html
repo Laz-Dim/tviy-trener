@@ -247,7 +247,14 @@
         const phoneInput = document.getElementById('phone');
         phoneInput.addEventListener('input', function (e) {
             let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 12) value = value.slice(0, 12); // Обмежуємо 12 цифрами (380...)
+            
+            // Якщо номер починається з 0, додаємо 38 попереду
+            if (value.startsWith('0')) {
+                value = '38' + value;
+            }
+            
+            // Обмежуємо 12 цифрами
+            if (value.length > 12) value = value.slice(0, 12);
             
             let x = value.match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
             
@@ -256,21 +263,25 @@
                 return;
             }
 
-            let val = '';
+            let val = '+38';
             if (x[1] === '38') {
-                val = '+38';
                 if (x[2]) val += ' (' + x[2];
                 if (x[3]) val += ') ' + x[3];
                 if (x[4]) val += '-' + x[4];
                 if (x[5]) val += '-' + x[5];
             } else {
-                // Якщо ввід починається не з 38, автоматично додаємо 38
-                val = '+38 (' + value.slice(0, 3);
+                // Якщо введено щось інше, ніж 38 на початку, 
+                // просто виводимо цифри, але валідація pattern зупинить відправку
+                val = '+' + value;
             }
             e.target.value = val;
         });
 
         document.getElementById('trainerForm').addEventListener('submit', function(e) {
+            if (!this.checkValidity()) {
+                e.preventDefault();
+                return;
+            }
             e.preventDefault();
             const status = document.getElementById('formStatus');
             status.innerText = 'Надсилаємо...';
