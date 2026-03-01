@@ -202,8 +202,8 @@
                     <div class="input-group">
                         <input type="tel" id="phone" name="phone" placeholder="+380 (__) ___-__-__ *" 
                                inputmode="numeric" 
-                               pattern="[\+0-9\s\-\(\)]+"
-                               oninvalid="this.setCustomValidity('Будь ласка, введіть коректний номер телефону')" 
+                               pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}"
+                               oninvalid="this.setCustomValidity('Будь ласка, введіть повний номер у форматі +38 (0XX) XXX-XX-XX')" 
                                oninput="this.setCustomValidity('')" required>
                     </div>
                     <div class="input-group">
@@ -246,12 +246,16 @@
         // Проста маска для телефону
         const phoneInput = document.getElementById('phone');
         phoneInput.addEventListener('input', function (e) {
-            let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 12) value = value.slice(0, 12); // Обмежуємо 12 цифрами (380...)
+            
+            let x = value.match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+            
             if (!x[1]) {
                 e.target.value = '';
                 return;
             }
-            // Форматування для України (38...)
+
             let val = '';
             if (x[1] === '38') {
                 val = '+38';
@@ -260,8 +264,8 @@
                 if (x[4]) val += '-' + x[4];
                 if (x[5]) val += '-' + x[5];
             } else {
-                // Якщо починають не з 38, просто дозволяємо ввід цифр
-                val = e.target.value.replace(/[^\d+]/g, '');
+                // Якщо ввід починається не з 38, автоматично додаємо 38
+                val = '+38 (' + value.slice(0, 3);
             }
             e.target.value = val;
         });
