@@ -265,7 +265,7 @@ h2::after {
 
 .phil-card {
     background: var(--bg-card);
-    padding: 40px;
+    padding: 24px;
     border-radius: 8px;
     border-top: 4px solid var(--accent);
     transition: 0.4s;
