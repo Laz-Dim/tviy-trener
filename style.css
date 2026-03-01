@@ -281,7 +281,7 @@ h2::after {
 
 .phil-card .icon {
     font-size: 40px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;
@@ -291,7 +291,7 @@ h2::after {
     width: 40px;
     height: 40px;
     object-fit: contain;
-    filter: brightness(0) invert(1);
+    filter: brightness(0) invert(0.85);
 }
 
 .phil-card h3 {
