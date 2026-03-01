@@ -251,9 +251,12 @@
             // Якщо номер починається з 0, додаємо 38 попереду
             if (value.startsWith('0')) {
                 value = '38' + value;
+            } else if (value.length > 0 && !value.startsWith('38')) {
+                // Якщо введено не з 38 і не з 0, примусово ставимо 38
+                value = '38' + value;
             }
             
-            // Обмежуємо 12 цифрами
+            // Обмежуємо 12 цифрами (380XXXXXXXXX)
             if (value.length > 12) value = value.slice(0, 12);
             
             let x = value.match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
@@ -269,21 +272,28 @@
                 if (x[3]) val += ') ' + x[3];
                 if (x[4]) val += '-' + x[4];
                 if (x[5]) val += '-' + x[5];
-            } else {
-                // Якщо введено щось інше, ніж 38 на початку, 
-                // просто виводимо цифри, але валідація pattern зупинить відправку
-                val = '+' + value;
             }
             e.target.value = val;
         });
 
         document.getElementById('trainerForm').addEventListener('submit', function(e) {
-            if (!this.checkValidity()) {
-                e.preventDefault();
+            e.preventDefault();
+            
+            const phoneInput = document.getElementById('phone');
+            const phoneValue = phoneInput.value;
+            // Суворий формат: +38 (0XX) XXX-XX-XX
+            const phoneRegex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+
+            if (!phoneRegex.test(phoneValue)) {
+                const status = document.getElementById('formStatus');
+                status.style.color = 'red';
+                status.innerText = 'Помилка: Будь ласка, введіть повний номер (+38 (0XX) XXX-XX-XX)';
+                phoneInput.focus();
                 return;
             }
-            e.preventDefault();
+
             const status = document.getElementById('formStatus');
+            status.style.color = 'var(--accent)';
             status.innerText = 'Надсилаємо...';
             
             const name = document.getElementById('name').value;
