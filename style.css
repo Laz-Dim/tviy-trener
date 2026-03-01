@@ -80,6 +80,10 @@ nav ul li a {
     transition: 0.3s;
 }
 
+nav-cta {
+   letter-spacing: 0.1em;
+}
+
 nav ul li a:hover {
     color: var(--accent);
 }
