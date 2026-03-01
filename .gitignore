@@ -1,0 +1,15 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# OpenClaw / Log files
+process_log.txt
+*.log
+transcripts/
+summaries/
+process_video.sh
+final_report.md
+
+# Build files (if any)
+node_modules/
+dist/
