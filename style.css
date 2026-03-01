@@ -283,13 +283,15 @@ h2::after {
     font-size: 40px;
     margin-bottom: 20px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .phil-card .icon img {
     width: 40px;
     height: 40px;
     object-fit: contain;
+    filter: brightness(0) invert(1);
 }
 
 .phil-card h3 {
