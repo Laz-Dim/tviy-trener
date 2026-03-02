@@ -7,9 +7,27 @@ process_log.txt
 *.log
 transcripts/
 summaries/
-process_video.sh
-final_report.md
+# process_video.sh  <-- This is actually a source file now
+# final_report.md   <-- This might be useful to keep if it's documentation
 
-# Build files (if any)
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Playwright artifacts
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Binary screenshots (we shouldn't commit these)
+*.png
+
+# Generated blog posts
+posts/
+
 node_modules/
 dist/

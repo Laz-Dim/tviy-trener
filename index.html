@@ -178,30 +178,22 @@
     <section id="blog">
         <div class="container">
             <h2>Нотатки тренера</h2>
-            <div class="blog-grid">
-                <article class="blog-card">
-                    <h3>Твоя спина — це не ворог</h3>
-                    <p>Як тренуватися, якщо діагностовано грижі? Розбираємо вправи на декомпресію та зміцнення м'язів-стабілізаторів...</p>
-                    <a href="blog-spine.html" class="read-more">Читати далі →</a>
-                </article>
-                <article class="blog-card">
-                    <h3>60 хвилин з гирею</h3>
-                    <p>Психологія витривалості: чому це тренування більше про мозок, ніж про м'язи, і як не здатися на півдорозі.</p>
-                    <a href="blog-kettlebell.html" class="read-more">Читати далі →</a>
-                </article>
-                <article class="blog-card">
-                    <h3>Геть дієти</h3>
-                    <p>3 звички, які змінять твоє тіло назавжди без стресу та голодування. Схуднення через усвідомленість.</p>
-                    <a href="blog-diet.html" class="read-more">Читати далі →</a>
-                </article>
-                <article class="blog-card">
-                    <h3>3 правила схуднення</h3>
-                    <p>Схуднення без стресу: 3 прості правила, які реально працюють. Дізнайтеся, як змінити свої звички.</p>
-                    <a href="blog-habits.html" class="read-more">Читати далі →</a>
-                </article>
+            <div class="blog-grid" id="blog-container">
+                <!-- Динамічні пости завантажуються тут -->
+                <p>Завантаження нотаток...</p>
             </div>
         </div>
     </section>
+
+    <!-- Modal for Blog Posts -->
+    <div id="blog-modal" class="modal">
+        <div class="modal-content blog-modal-content">
+            <span class="close-blog-modal">&times;</span>
+            <div id="modal-body">
+                <!-- Вміст статті -->
+            </div>
+        </div>
+    </div>
 
     <section id="registration">
         <div class="container">
@@ -263,6 +255,193 @@
     </footer>
 
     <script>
+        // Динамічний блог
+        async function loadBlog() {
+            try {
+                const response = await fetch('blog_posts.json');
+                const posts = await response.json();
+
+                // Встановлюємо дату початку (наприклад, 1 березня 2025)
+                const startDate = new Date('2025-03-01').getTime();
+                const now = new Date().getTime();
+                const diffDays = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+
+                // Відфільтровуємо доступні на сьогодні пости
+                // Якщо diffDays < 0 (сайт запущено раніше дати старту), показуємо перший пост
+                const availablePosts = posts.filter(post => post.date_offset <= Math.max(diffDays, 0));
+
+                const container = document.getElementById('blog-container');
+                container.innerHTML = '';
+
+                if (availablePosts.length === 0) {
+                    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Нові нотатки з’являться незабаром!</p>';
+                    return;
+                }
+
+                // Останній доступний пост робимо акцентним
+                const todayPost = availablePosts[availablePosts.length - 1];
+                const historyPosts = availablePosts.slice(0, -1).reverse();
+
+                // Рендеримо "Сьогоднішній" пост
+                const mainPost = document.createElement('div');
+                mainPost.className = 'main-blog-card';
+
+                const mainBlogContent = document.createElement('div');
+                mainBlogContent.className = 'main-blog-content';
+
+                const mainBlogImage = document.createElement('div');
+                mainBlogImage.className = 'main-blog-image';
+                const mainImg = document.createElement('img');
+                mainImg.src = todayPost.thumbnail;
+                mainImg.alt = todayPost.title;
+                mainBlogImage.appendChild(mainImg);
+
+                const mainBlogText = document.createElement('div');
+                mainBlogText.className = 'main-blog-text';
+
+                const badge = document.createElement('span');
+                badge.className = 'blog-badge';
+                badge.textContent = 'Сьогоднішня нотатка';
+
+                const mainTitle = document.createElement('h3');
+                mainTitle.textContent = todayPost.title || 'Поради від тренера';
+
+                const mainPreview = document.createElement('p');
+                mainPreview.textContent = todayPost.preview;
+
+                const mainBtn = document.createElement('button');
+                mainBtn.className = 'cta-button';
+                mainBtn.textContent = 'Читати повністю';
+                mainBtn.onclick = () => openBlogPost(todayPost);
+
+                mainBlogText.appendChild(badge);
+                mainBlogText.appendChild(mainTitle);
+                mainBlogText.appendChild(mainPreview);
+                mainBlogText.appendChild(mainBtn);
+
+                mainBlogContent.appendChild(mainBlogImage);
+                mainBlogContent.appendChild(mainBlogText);
+                mainPost.appendChild(mainBlogContent);
+                container.appendChild(mainPost);
+
+                if (historyPosts.length > 0) {
+                    const historyTitle = document.createElement('h3');
+                    historyTitle.innerText = 'Архів нотаток';
+                    historyTitle.className = 'history-title';
+                    container.appendChild(historyTitle);
+
+                    const historyGrid = document.createElement('div');
+                    historyGrid.className = 'history-grid';
+
+                    historyPosts.slice(0, 6).forEach(post => { // Показуємо останні 6 з архіву
+                        const article = document.createElement('article');
+                        article.className = 'blog-card';
+
+                        const postImg = document.createElement('img');
+                        postImg.src = post.thumbnail;
+                        postImg.alt = post.title;
+                        postImg.className = 'blog-thumbnail';
+
+                        const postTitle = document.createElement('h3');
+                        postTitle.textContent = post.title || 'Нотатка тренера';
+
+                        const postPreview = document.createElement('p');
+                        postPreview.textContent = post.preview;
+
+                        const postBtn = document.createElement('button');
+                        postBtn.className = 'read-more-btn';
+                        postBtn.textContent = 'Читати далі →';
+                        postBtn.onclick = () => openBlogPost(post);
+
+                        article.appendChild(postImg);
+                        article.appendChild(postTitle);
+                        article.appendChild(postPreview);
+                        article.appendChild(postBtn);
+
+                        historyGrid.appendChild(article);
+                    });
+                    container.appendChild(historyGrid);
+
+                    if (historyPosts.length > 6) {
+                        const moreBtn = document.createElement('div');
+                        moreBtn.style.gridColumn = "1/-1";
+                        moreBtn.style.textAlign = "center";
+                        moreBtn.innerHTML = `<a href="https://www.youtube.com/@tviy_trener" target="_blank" class="cta-button secondary">Більше в YouTube</a>`;
+                        container.appendChild(moreBtn);
+                    }
+                }
+            } catch (error) {
+                console.error('Помилка завантаження блогу:', error);
+                document.getElementById('blog-container').innerHTML = '<p>Не вдалося завантажити блог.</p>';
+            }
+        }
+
+        async function openBlogPost(summary) {
+            const modal = document.getElementById('blog-modal');
+            const body = document.getElementById('modal-body');
+
+            body.innerHTML = '<p style="text-align:center; padding: 40px;">Завантаження...</p>';
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+
+            try {
+                const response = await fetch(`posts/${summary.id}.json`);
+                if (!response.ok) throw new Error('Помилка завантаження вмісту');
+                const post = await response.json();
+
+                body.innerHTML = '';
+
+                const postImg = document.createElement('img');
+                postImg.src = post.thumbnail;
+                postImg.alt = post.title;
+                postImg.style.cssText = "width:100%; max-height:400px; object-fit:cover; border-radius:8px; margin-bottom:20px;";
+
+                const postTitle = document.createElement('h2');
+                postTitle.textContent = post.title;
+
+                const postFullText = document.createElement('div');
+                postFullText.className = 'blog-full-text';
+                postFullText.style.cssText = "white-space: pre-wrap; line-height:1.6; font-size:1.1rem; color:#ccc;";
+                postFullText.textContent = post.text;
+
+                const footerDiv = document.createElement('div');
+                footerDiv.style.cssText = "margin-top:30px; border-top:1px solid #444; padding-top:20px;";
+
+                const videoLink = document.createElement('a');
+                videoLink.href = post.url;
+                videoLink.target = "_blank";
+                videoLink.className = "cta-button secondary";
+                videoLink.textContent = "Дивитись відео на YouTube";
+
+                footerDiv.appendChild(videoLink);
+
+                body.appendChild(postImg);
+                body.appendChild(postTitle);
+                body.appendChild(postFullText);
+                body.appendChild(footerDiv);
+            } catch (error) {
+                console.error(error);
+                body.innerHTML = '<p style="text-align:center; color:red; padding:40px;">Не вдалося завантажити пост. Спробуйте пізніше.</p>';
+            }
+        }
+
+        const blogModal = document.getElementById('blog-modal');
+        const closeBlogBtn = document.querySelector('.close-blog-modal');
+
+        closeBlogBtn.onclick = () => {
+            blogModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+
+        window.onclick = (event) => {
+            if (event.target == blogModal) {
+                blogModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        loadBlog();
+
         // Лайтбокс
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
@@ -364,26 +543,37 @@
             const goal = document.getElementById('goal').options[document.getElementById('goal').selectedIndex].text;
             const message = document.getElementById('message').value;
 
-            const part1 = '8506794921';
-            const part2 = 'AAHIrLIDtRhgXPmEXdIhY6vUKO7WGXIOuvU';
-            const token = `${part1}:${part2}`;
-            const chatIdDimon = '143220916';
-            const chatIdTrainer = '5192950042';
+            // --- КОНФІГУРАЦІЯ TELEGRAM ---
+            // УВАГА: Зберігання токена на фронтенді є небезпечним (його можуть викрасти).
+            // Для реального проєкту рекомендується створити невеликий бекенд (Node.js/Python),
+            // який буде пересилати повідомлення, приховуючи токен.
+
+            const TG_CONFIG = {
+                token: 'ВАШ_TELEGRAM_BOT_TOKEN', // @BotFather
+                adminChatId: '143220916',      // ID Дмитра
+                trainerChatId: '5192950042'    // ID Іллі
+            };
+
+            if (TG_CONFIG.token === 'ВАШ_TELEGRAM_BOT_TOKEN') {
+                console.warn('Telegram token is not configured.');
+                status.innerText = 'Помилка конфігурації. Будь ласка, зв’яжіться з нами по телефону.';
+                return;
+            }
+
             const text = `🚀 Нова заявка з сайту!\n\n👤 Ім'я: ${name}\n📞 Телефон: ${phone}\n🎯 Ціль: ${goal}\n💬 Повідомлення: ${message}`;
 
-            // Відправляємо повідомлення Dimon
-            fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            // Відправляємо повідомлення адміну
+            fetch(`https://api.telegram.org/bot${TG_CONFIG.token}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: chatIdDimon, text: text })
+                body: JSON.stringify({ chat_id: TG_CONFIG.adminChatId, text: text })
             })
             .then(response => {
-                console.log('Telegram API response (Dimon):', response);
                 // Відправляємо повідомлення тренеру
-                return fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+                return fetch(`https://api.telegram.org/bot${TG_CONFIG.token}/sendMessage`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: chatIdTrainer, text: text })
+                    body: JSON.stringify({ chat_id: TG_CONFIG.trainerChatId, text: text })
                 });
             })
             .then(response => {
