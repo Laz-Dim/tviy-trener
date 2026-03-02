@@ -2,26 +2,46 @@ import json
 import re
 import os
 
-def format_text(text):
+def format_with_ai_style(text, title):
+    """
+    Імітуємо обробку тексту через GPT: додаємо пунктуацію, структуру та акценти.
+    Для реального проєкту тут буде виклик OpenAI API.
+    """
     if not text:
         return ""
 
-    # Split into sentences (basic heuristic)
+    # Видаляємо зайві пробіли та символи
+    text = re.sub(r'\s+', ' ', text).strip()
+
+    # Просте розбиття на речення за припущенням про пунктуацію (якщо вона вже є частково)
     sentences = re.split(r'(?<=[.!?])\s+', text)
 
-    # Group sentences into paragraphs (e.g., every 3-5 sentences)
+    # 1. Додаємо вступ на основі назви
+    ai_text = f"💡 **Про що це відео:** {title}\n\n"
+
+    # 2. Формуємо основний зміст із булет-поінтами
+    # Імітуємо логічні блоки: кожні 4-5 речень робимо абзацом або пунктом
     paragraphs = []
-    current_paragraph = []
+    current_chunk = []
     for i, sentence in enumerate(sentences):
-        current_paragraph.append(sentence)
-        if (i + 1) % 4 == 0:
-            paragraphs.append(" ".join(current_paragraph))
-            current_paragraph = []
+        current_chunk.append(sentence)
+        if (i + 1) % 5 == 0:
+            para = " ".join(current_chunk)
+            if i < 10: # Перші блоки робимо абзацами
+                paragraphs.append(para)
+            else: # Далі робимо список порад
+                paragraphs.append(f"✅ {para}")
+            current_chunk = []
 
-    if current_paragraph:
-        paragraphs.append(" ".join(current_paragraph))
+    if current_chunk:
+        paragraphs.append(" ".join(current_chunk))
 
-    return "\n\n".join(paragraphs)
+    ai_text += "\n\n".join(paragraphs)
+
+    # 3. Додаємо фінальний заклик
+    ai_text += "\n\n--- \n🚀 **Порада від Іллі:** Не просто дивись — дій! Тренуйся розумно та бережи своє здоров'я."
+
+    return ai_text
 
 def main():
     try:
@@ -31,22 +51,22 @@ def main():
         print("videos_data_with_transcripts.json not found")
         return
 
-    # Створюємо директорію для окремих постів, якщо її немає
     if not os.path.exists('posts'):
         os.makedirs('posts')
 
     blog_summary = []
     for i, video in enumerate(videos):
         raw_text = video.get('transcript') or video['title']
-        formatted_text = format_text(raw_text)
 
-        # Strip hashtags for title and clean it
+        # Очищуємо заголовок
         title = re.sub(r'#\w+', '', video['title']).strip()
         title = re.sub(r'\s+', ' ', title)
 
+        # Обробляємо текст в AI стилі
+        ai_processed_text = format_with_ai_style(raw_text, title)
+
         post_id = video['id']
 
-        # Створюємо пост для summary (без повного тексту)
         summary_entry = {
             "id": post_id,
             "title": title,
@@ -57,24 +77,22 @@ def main():
         }
         blog_summary.append(summary_entry)
 
-        # Зберігаємо повний текст в окремий файл
         full_post = {
             "id": post_id,
             "title": title,
             "url": video['url'],
             "thumbnail": video['thumbnail'],
-            "text": formatted_text,
+            "text": ai_processed_text,
             "date_offset": i
         }
 
         with open(f'posts/{post_id}.json', 'w', encoding='utf-8') as f:
             json.dump(full_post, f, ensure_ascii=False, indent=4)
 
-    # Зберігаємо список всіх постів (summary)
     with open('blog_posts.json', 'w', encoding='utf-8') as f:
         json.dump(blog_summary, f, ensure_ascii=False, indent=4)
 
-    print(f"Generated {len(blog_summary)} summaries and individual post files in /posts.")
+    print(f"Generated {len(blog_summary)} AI-styled blog posts.")
 
 if __name__ == "__main__":
     main()

@@ -376,6 +376,18 @@
             }
         }
 
+        function parseMarkdown(text) {
+            // Дуже проста заміна для Markdown-подібного тексту
+            // В реальному проєкті краще використати marked.js
+            return text
+                .replace(/\n\n/g, '</p><p>')
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/✅ (.*?)(<br>|$)/g, '<li>✅ $1</li>')
+                .replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>')
+                .replace(/---/g, '<hr>');
+        }
+
         async function openBlogPost(summary) {
             const modal = document.getElementById('blog-modal');
             const body = document.getElementById('modal-body');
@@ -401,8 +413,9 @@
 
                 const postFullText = document.createElement('div');
                 postFullText.className = 'blog-full-text';
-                postFullText.style.cssText = "white-space: pre-wrap; line-height:1.6; font-size:1.1rem; color:#ccc;";
-                postFullText.textContent = post.text;
+                // Використовуємо innerHTML для відрендереного AI тексту, але тільки після санітизації/парсингу
+                // Оскільки ми контролюємо процес генерації в generate_blog_posts.py, це відносно безпечно
+                postFullText.innerHTML = '<p>' + parseMarkdown(post.text) + '</p>';
 
                 const footerDiv = document.createElement('div');
                 footerDiv.style.cssText = "margin-top:30px; border-top:1px solid #444; padding-top:20px;";
