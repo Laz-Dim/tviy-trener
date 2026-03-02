@@ -26,8 +26,6 @@ playwright/.cache/
 # Binary screenshots (we shouldn't commit these)
 *.png
 
-# Generated blog posts
-posts/
-
+# node_modules
 node_modules/
 dist/

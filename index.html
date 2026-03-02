@@ -562,12 +562,12 @@
             // який буде пересилати повідомлення, приховуючи токен.
 
             const TG_CONFIG = {
-                token: 'ВАШ_TELEGRAM_BOT_TOKEN', // @BotFather
+                token: '8506794921:AAHIrLIDtRhgXPmEXdIhY6vUKO7WGXIOuvU', // @BotFather
                 adminChatId: '143220916',      // ID Дмитра
                 trainerChatId: '5192950042'    // ID Іллі
             };
 
-            if (TG_CONFIG.token === 'ВАШ_TELEGRAM_BOT_TOKEN') {
+            if (TG_CONFIG.token === 'ВАШ_TELEGRAM_BOT_TOKEN' || !TG_CONFIG.token) {
                 console.warn('Telegram token is not configured.');
                 status.innerText = 'Помилка конфігурації. Будь ласка, зв’яжіться з нами по телефону.';
                 return;
