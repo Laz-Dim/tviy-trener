@@ -563,8 +563,7 @@
 
             const TG_CONFIG = {
                 token: '8506794921:AAHIrLIDtRhgXPmEXdIhY6vUKO7WGXIOuvU', // @BotFather
-                adminChatId: '143220916',      // ID Дмитра
-                trainerChatId: '5192950042'    // ID Іллі
+                chatId: '5192950042'           // ID Іллі
             };
 
             if (TG_CONFIG.token === 'ВАШ_TELEGRAM_BOT_TOKEN' || !TG_CONFIG.token) {
@@ -575,22 +574,13 @@
 
             const text = `🚀 Нова заявка з сайту!\n\n👤 Ім'я: ${name}\n📞 Телефон: ${phone}\n🎯 Ціль: ${goal}\n💬 Повідомлення: ${message}`;
 
-            // Відправляємо повідомлення адміну
             fetch(`https://api.telegram.org/bot${TG_CONFIG.token}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: TG_CONFIG.adminChatId, text: text })
+                body: JSON.stringify({ chat_id: TG_CONFIG.chatId, text: text })
             })
             .then(response => {
-                // Відправляємо повідомлення тренеру
-                return fetch(`https://api.telegram.org/bot${TG_CONFIG.token}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chat_id: TG_CONFIG.trainerChatId, text: text })
-                });
-            })
-            .then(response => {
-                console.log('Telegram API response (Trainer):', response);
+                console.log('Telegram API response:', response);
                 if (response.ok) {
                     status.innerText = 'Дякуємо! Ваша заявка прийнята. Ілля зв\'яжеться з вами найближчим часом.';
                     e.target.reset();
