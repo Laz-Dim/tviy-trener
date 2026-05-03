@@ -129,7 +129,7 @@
                 <div class="gallery-item"><img loading="lazy" src="img_new/illya_03.jpg" alt="Тренер 1"></div>
                 <div class="gallery-item"><img loading="lazy" src="img_new/illya_07.jpg" alt="Тренер 2"></div>
                 <div class="gallery-item"><img loading="lazy" src="img_new/illya_04.jpg" alt="Тренер 3"></div>
-                <div class="gallery-item"><img loading="lazy" src="img_new/illya_06.jpg" alt="Тренер 4"></div>
+                <div class="gallery-item"><img loading="lazy" src="img_new/illya_05.jpg" alt="Тренер 4"></div>
             </div>
         </div>
     </section>
@@ -257,123 +257,51 @@
     <script>
         // Динамічний блог
         async function loadBlog() {
-            try {
-                const response = await fetch('blog_posts.json');
-                const posts = await response.json();
+            const container = document.getElementById('blog-container');
+            container.innerHTML = '';
 
-                // Встановлюємо дату початку (наприклад, 1 березня 2025)
-                const startDate = new Date('2025-03-01').getTime();
-                const now = new Date().getTime();
-                const diffDays = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
-
-                // Відфільтровуємо доступні на сьогодні пости
-                // Якщо diffDays < 0 (сайт запущено раніше дати старту), показуємо перший пост
-                const availablePosts = posts.filter(post => post.date_offset <= Math.max(diffDays, 0));
-
-                const container = document.getElementById('blog-container');
-                container.innerHTML = '';
-
-                if (availablePosts.length === 0) {
-                    container.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Нові нотатки з’являться незабаром!</p>';
-                    return;
+            const posts = [
+                {
+                    id: "RQamibQ8QGg",
+                    title: "Класика чи кружка? Техніка бокового удару 🤜",
+                    thumbnail: "https://img.youtube.com/vi/RQamibQ8QGg/hqdefault.jpg",
+                    preview: "Який удар кращий: кружкою чи класикою? Обидва варіанти мають свої сильні сторони, недоліки та особливості застосування. Розбираємо техніку..."
+                },
+                {
+                    id: "jQhoelMMo5M",
+                    title: "✅ Чим корисне плавання та вода вцілому?🔥",
+                    thumbnail: "https://img.youtube.com/vi/jQhoelMMo5M/hqdefault.jpg",
+                    preview: "Плавання - це секрет красивого, гармонійного, естетичного тіла. Вода м'яко відновлює, знімає втому та водночас формує силу і витонченість."
                 }
+            ];
 
-                // Останній доступний пост робимо акцентним
-                const todayPost = availablePosts[availablePosts.length - 1];
-                const historyPosts = availablePosts.slice(0, -1).reverse();
+            posts.forEach(post => {
+                const article = document.createElement('article');
+                article.className = 'blog-card';
 
-                // Рендеримо "Сьогоднішній" пост
-                const mainPost = document.createElement('div');
-                mainPost.className = 'main-blog-card';
+                const postImg = document.createElement('img');
+                postImg.src = post.thumbnail;
+                postImg.alt = post.title;
+                postImg.className = 'blog-thumbnail';
 
-                const mainBlogContent = document.createElement('div');
-                mainBlogContent.className = 'main-blog-content';
+                const postTitle = document.createElement('h3');
+                postTitle.textContent = post.title;
 
-                const mainBlogImage = document.createElement('div');
-                mainBlogImage.className = 'main-blog-image';
-                const mainImg = document.createElement('img');
-                mainImg.src = todayPost.thumbnail;
-                mainImg.alt = todayPost.title;
-                mainBlogImage.appendChild(mainImg);
+                const postPreview = document.createElement('p');
+                postPreview.textContent = post.preview;
 
-                const mainBlogText = document.createElement('div');
-                mainBlogText.className = 'main-blog-text';
+                const postBtn = document.createElement('button');
+                postBtn.className = 'read-more-btn';
+                postBtn.textContent = 'Читати далі →';
+                postBtn.onclick = () => openBlogPost(post);
 
-                const badge = document.createElement('span');
-                badge.className = 'blog-badge';
-                badge.textContent = 'Сьогоднішня нотатка';
+                article.appendChild(postImg);
+                article.appendChild(postTitle);
+                article.appendChild(postPreview);
+                article.appendChild(postBtn);
 
-                const mainTitle = document.createElement('h3');
-                mainTitle.textContent = todayPost.title || 'Поради від тренера';
-
-                const mainPreview = document.createElement('p');
-                mainPreview.textContent = todayPost.preview;
-
-                const mainBtn = document.createElement('button');
-                mainBtn.className = 'cta-button';
-                mainBtn.textContent = 'Читати повністю';
-                mainBtn.onclick = () => openBlogPost(todayPost);
-
-                mainBlogText.appendChild(badge);
-                mainBlogText.appendChild(mainTitle);
-                mainBlogText.appendChild(mainPreview);
-                mainBlogText.appendChild(mainBtn);
-
-                mainBlogContent.appendChild(mainBlogImage);
-                mainBlogContent.appendChild(mainBlogText);
-                mainPost.appendChild(mainBlogContent);
-                container.appendChild(mainPost);
-
-                if (historyPosts.length > 0) {
-                    const historyTitle = document.createElement('h3');
-                    historyTitle.innerText = 'Архів нотаток';
-                    historyTitle.className = 'history-title';
-                    container.appendChild(historyTitle);
-
-                    const historyGrid = document.createElement('div');
-                    historyGrid.className = 'history-grid';
-
-                    historyPosts.slice(0, 6).forEach(post => { // Показуємо останні 6 з архіву
-                        const article = document.createElement('article');
-                        article.className = 'blog-card';
-
-                        const postImg = document.createElement('img');
-                        postImg.src = post.thumbnail;
-                        postImg.alt = post.title;
-                        postImg.className = 'blog-thumbnail';
-
-                        const postTitle = document.createElement('h3');
-                        postTitle.textContent = post.title || 'Нотатка тренера';
-
-                        const postPreview = document.createElement('p');
-                        postPreview.textContent = post.preview;
-
-                        const postBtn = document.createElement('button');
-                        postBtn.className = 'read-more-btn';
-                        postBtn.textContent = 'Читати далі →';
-                        postBtn.onclick = () => openBlogPost(post);
-
-                        article.appendChild(postImg);
-                        article.appendChild(postTitle);
-                        article.appendChild(postPreview);
-                        article.appendChild(postBtn);
-
-                        historyGrid.appendChild(article);
-                    });
-                    container.appendChild(historyGrid);
-
-                    if (historyPosts.length > 6) {
-                        const moreBtn = document.createElement('div');
-                        moreBtn.style.gridColumn = "1/-1";
-                        moreBtn.style.textAlign = "center";
-                        moreBtn.innerHTML = `<a href="https://www.youtube.com/@tviy_trener" target="_blank" class="cta-button secondary">Більше в YouTube</a>`;
-                        container.appendChild(moreBtn);
-                    }
-                }
-            } catch (error) {
-                console.error('Помилка завантаження блогу:', error);
-                document.getElementById('blog-container').innerHTML = '<p>Не вдалося завантажити блог.</p>';
-            }
+                container.appendChild(article);
+            });
         }
 
         function parseMarkdown(text) {
