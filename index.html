@@ -260,57 +260,51 @@
             const container = document.getElementById('blog-container');
             container.innerHTML = '';
 
-            const posts = [
-                {
-                    id: "RQamibQ8QGg",
-                    title: "Класика чи кружка? Техніка бокового удару 🤜",
-                    thumbnail: "https://img.youtube.com/vi/RQamibQ8QGg/hqdefault.jpg",
-                    preview: "Який удар кращий: кружкою чи класикою? Обидва варіанти мають свої сильні сторони, недоліки та особливості застосування. Розбираємо техніку..."
-                },
-                {
-                    id: "jQhoelMMo5M",
-                    title: "✅ Чим корисне плавання та вода вцілому?🔥",
-                    thumbnail: "https://img.youtube.com/vi/jQhoelMMo5M/hqdefault.jpg",
-                    preview: "Плавання - це секрет красивого, гармонійного, естетичного тіла. Вода м'яко відновлює, знімає втому та водночас формує силу і витонченість."
-                }
-            ];
+            try {
+                const response = await fetch('blog_posts.json');
+                if (!response.ok) throw new Error('Помилка завантаження');
+                const posts = await response.json();
 
-            posts.forEach(post => {
-                const article = document.createElement('article');
-                article.className = 'blog-card';
+                posts.forEach(post => {
+                    const article = document.createElement('article');
+                    article.className = 'blog-card';
 
-                const postImg = document.createElement('img');
-                postImg.src = post.thumbnail;
-                postImg.alt = post.title;
-                postImg.className = 'blog-thumbnail';
+                    const postImg = document.createElement('img');
+                    postImg.src = post.thumbnail;
+                    postImg.alt = post.title;
+                    postImg.className = 'blog-thumbnail';
 
-                const postTitle = document.createElement('h3');
-                postTitle.textContent = post.title;
+                    const postTitle = document.createElement('h3');
+                    postTitle.textContent = post.title;
 
-                const postPreview = document.createElement('p');
-                postPreview.textContent = post.preview;
+                    const postPreview = document.createElement('p');
+                    postPreview.textContent = post.preview;
 
-                const postBtn = document.createElement('button');
-                postBtn.className = 'read-more-btn';
-                postBtn.textContent = 'Читати далі →';
-                postBtn.onclick = () => openBlogPost(post);
+                    const postBtn = document.createElement('button');
+                    postBtn.className = 'read-more-btn';
+                    postBtn.textContent = 'Читати далі →';
+                    postBtn.onclick = () => openBlogPost(post);
 
-                article.appendChild(postImg);
-                article.appendChild(postTitle);
-                article.appendChild(postPreview);
-                article.appendChild(postBtn);
+                    article.appendChild(postImg);
+                    article.appendChild(postTitle);
+                    article.appendChild(postPreview);
+                    article.appendChild(postBtn);
 
-                container.appendChild(article);
-            });
+                    container.appendChild(article);
+                });
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<p>Не вдалося завантажити нотатки.</p>';
+            }
         }
 
         function parseMarkdown(text) {
             // Дуже проста заміна для Markdown-подібного тексту
-            // В реальному проєкті краще використати marked.js
             return text
                 .replace(/\n\n/g, '</p><p>')
                 .replace(/\n/g, '<br>')
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="width:100%; border-radius:8px; margin:15px 0;">')
                 .replace(/✅ (.*?)(<br>|$)/g, '<li>✅ $1</li>')
                 .replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>')
                 .replace(/---/g, '<hr>');
