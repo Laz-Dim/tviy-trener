@@ -368,9 +368,9 @@ h2::after {
 
 /* New Blog Layout */
 #blog-container {
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
 }
 
 .main-blog-card {
