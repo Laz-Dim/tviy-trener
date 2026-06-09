@@ -9,12 +9,75 @@
     <meta property="og:image" content="img_new/illya_01.jpg">
     <meta property="og:type" content="website">
     <title>Ілля Поліщук — Твій Тренер у Львові</title>
+    <link rel="canonical" href="https://tviy-trener.com/">
     <link rel="icon" type="image/jpeg" href="img_new/logo.jpg">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Schema.org Person -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Ілля Поліщук",
+        "url": "https://tviy-trener.com/",
+        "image": "https://tviy-trener.com/img_new/illya_01.jpg",
+        "jobTitle": "Персональний тренер",
+        "worksFor": {
+            "@type": "Organization",
+            "name": "Твій Тренер"
+        },
+        "sameAs": [
+            "https://www.youtube.com/@tviy_trener",
+            "https://www.tiktok.com/@tviy_trener"
+        ],
+        "knowsAbout": [
+            "Персональні тренування",
+            "Схуднення",
+            "Набір маси",
+            "Бокс",
+            "Загальна фізична підготовка",
+            "Харчування"
+        ],
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Львів",
+            "addressCountry": "UA"
+        }
+    }
+    </script>
+    
+    <!-- Schema.org SportsActivityLocation -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SportsActivityLocation",
+        "name": "Твій Тренер —Особистий кабінет",
+        "url": "https://tviy-trener.com/",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Левандівка (кінцева)",
+            "addressLocality": "Львів",
+            "addressCountry": "UA"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "49.8397",
+            "longitude": "24.0297"
+        },
+        "openingHoursSpecification": [
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                "opens": "08:00",
+                "closes": "22:00"
+            }
+        ]
+    }
+    </script>
 </head>
 <body>
     <header>
@@ -27,357 +90,302 @@
                 <li><a href="#about">Філософія</a></li>
                 <li><a href="#services">Послуги</a></li>
                 <li><a href="#videos">Відео</a></li>
-                <li><a href="#blog">Блог</a></li>
+                <li><a href="#blog">Нотатки</a></li>
                 <li><a href="#contacts">Контакти</a></li>
                 <li><a href="#registration" class="nav-cta">Записатись</a></li>
             </ul>
         </nav>
     </header>
 
-    <section id="hero">
-        <div class="hero-content">
-            <h1>ІЛЛЯ ПОЛІЩУК</h1>
-            <p class="subtitle">Сила, Дисципліна, Результат</p>
-            <p class="description">Персональний тренер у Львові з 20-річним досвідом. <br class="desktop-br">Ступінь магістра за спеціальністю фізична культура і спорт. <br class="desktop-br">Твоє тіло — це твоя відповідальність. <br class="desktop-br">Почни сьогодні.</p>
-            <a href="#registration" class="cta-button">Записатись на пробне тренування</a>
-        </div>
-    </section>
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h1>ІЛЛЯ ПОЛІЩУК</h1>
+                <p class="subtitle">Сила, Дисципліна, Результат</p>
+                <p class="description">Персональний тренер у Львові з 20-річним досвідом. <br class="desktop-br">Ступінь магістра за спеціальністю фізична культура і спорт. <br class="desktop-br">Твоє тіло — це твоя відповідальність. <br class="desktop-br">Почни сьогодні.</p>
+                <a href="#registration" class="cta-button">Записатись на пробне тренування</a>
+            </div>
+        </section>
 
-    <section id="about">
-        <div class="container">
-            <h2>Філософія тренувань</h2>
-            <div class="philosophy-grid">
-                <div class="phil-card">
-                    <div class="icon"><img loading="lazy" src="icons/brain-lightning.svg" alt="Розумна сила" width="40" height="40"></div>
-                    <h3>Розумна сила</h3>
-                    <p>Вага на штанзі не має значення, якщо вона руйнує суглоби. Техніка — це спосіб зберегти здоров'я на десятиліття.</p>
-                </div>
-                <div class="phil-card">
-                    <div class="icon"><img loading="lazy" src="icons/dumbbell-ray.svg" alt="Атлетизм" width="40" height="40"></div>
-                    <h3>Атлетизм</h3>
-                    <p>Тіло має бути корисним. Вправи на тренажерах, робота з вільними вагами, тренування ударної техніки, заняття з гирями, тренування з вагою власного тіла — все це створює універсального атлета.</p>
-                </div>
-                <div class="phil-card">
-                    <div class="icon"><img loading="lazy" src="icons/fitness-time.svg" alt="Життя — марафон" width="40" height="40"></div>
-                    <h3>Життя марафон</h3>
-                    <p>Немає сенсу вигорати за місяць. Потрібно знайти свій темп, усвідомлено харчуватися та вчасно відновлюватися.</p>
-                </div>
-                <div class="phil-card">
-                    <div class="icon"><img loading="lazy" src="icons/first-laurel.svg" alt="Дисципліна" width="40" height="40"></div>
-                    <h3>Дисципліна</h3>
-                    <p>Силові комплекси та кардіо тренування - це не про м'язи, а про характер, вміння терпіти та контролювати дихання.</p>
+        <section id="about">
+            <div class="container">
+                <h2>Філософія тренувань</h2>
+                <div class="philosophy-grid">
+                    <div class="phil-card">
+                        <div class="icon"><img loading="lazy" src="icons/brain-lightning.svg" alt="Розумна сила" width="40" height="40"></div>
+                        <h3>Розумна сила</h3>
+                        <p>Вага на штанзі не має значення, якщо вона руйнує суглоби. Техніка — це спосіб зберегти здоров'я на десятиліття.</p>
+                    </div>
+                    <div class="phil-card">
+                        <div class="icon"><img loading="lazy" src="icons/dumbbell-ray.svg" alt="Атлетизм" width="40" height="40"></div>
+                        <h3>Атлетизм</h3>
+                        <p>Тіло має бути корисним. Вправи на тренажерах, робота з вільними вагами, тренування ударної техніки, заняття з гирями, тренування з вагою власного тіла — все це створює універсального атлета.</p>
+                    </div>
+                    <div class="phil-card">
+                        <div class="icon"><img loading="lazy" src="icons/fitness-time.svg" alt="Життя — марафон" width="40" height="40"></div>
+                        <h3>Життя марафон</h3>
+                        <p>Немає сенсу вигорати за місяць. Потрібно знайти свій темп, усвідомлено харчуватися та вчасно відновлюватися.</p>
+                    </div>
+                    <div class="phil-card">
+                        <div class="icon"><img loading="lazy" src="icons/first-laurel.svg" alt="Дисципліна" width="40" height="40"></div>
+                        <h3>Дисципліна</h3>
+                        <p>Силові комплекси та кардіо тренування - це не про м'язи, а про характер, вміння терпіти та контролювати дихання.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="education">
-        <div class="container">
-            <h2>Освіта та сертифікати</h2>
-            <div class="edu-container">
-                <div class="edu-text">
-                    <p>Ступінь магістра за спеціальністю фізична культура і спорт. Постійно вдосконалюю свої знання, щоб надавати клієнтам найактуальнішу та найбезпечнішу методику тренувань.</p>
-                </div>
-                <div class="diploma-preview">
-                    <img loading="lazy" src="img_new/diplom_watermark.jpg" alt="Диплом тренера" class="zoomable-img">
+        <section id="education">
+            <div class="container">
+                <h2>Освіта та сертифікати</h2>
+                <div class="edu-container">
+                    <div class="edu-text">
+                        <p>Ступінь магістра за спеціальністю фізична культура і спорт. Постійно вдосконалюю свої знання, щоб надавати клієнтам найактуальнішу та найбезпечнішу методику тренувань.</p>
+                    </div>
+                    <div class="diploma-preview">
+                        <img loading="lazy" src="img_new/diplom_watermark.jpg" alt="Диплом тренера" class="zoomable-img">
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="services">
-        <div class="container">
-            <h2>Напрямки роботи</h2>
-            <div class="services-grid">
-                <div class="service-card">
-                    <h3>Персональні тренування</h3>
-                    <p>Індивідуальна робота в залі, фокус на техніку та безпеку при роботі з вільними вагами.</p>
-                </div>
-                <div class="service-card">
-                    <h3>Схуднення</h3>
-                    <p>Ефективні програми для спалювання жиру, корекція метаболізму та покращення рельєфу тіла.</p>
-                </div>
-                <div class="service-card">
-                    <h3>Набір маси</h3>
-                    <p>Силовий тренінг для гіпертрофії м'язів, робота над силою та побудова потужної статури.</p>
-                </div>
-                <div class="service-card">
-                    <h3>Бокс та лапи</h3>
-                    <p>Розвиток швидкості, координації та впевненості. Робота на мішку та спаринги з тренером.</p>
-                </div>
-                <div class="service-card">
-                    <h3>ЗФП</h3>
-                    <p>Загальна фізична підготовка для будь-якого віку та рівня фізичної форми.</p>
-                </div>
-                <div class="service-card">
-                    <h3>Харчування</h3>
-                    <p>Усвідомлений підхід без жорстких дієт. Режим, контроль порцій та баланс нутрієнтів.</p>
+        <section id="services">
+            <div class="container">
+                <h2>Напрямки роботи</h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <h3>Персональні тренування</h3>
+                        <p>Індивідуальна робота в залі, фокус на техніку та безпеку при роботі з вільними вагами.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Схуднення</h3>
+                        <p>Ефективні програми для спалювання жиру, корекція метаболізму та покращення рельєфу тіла.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Набір маси</h3>
+                        <p>Силовий тренінг для гіпертрофії м'язів, робота над силою та побудова потужної статури.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Бокс та лапи</h3>
+                        <p>Розвиток швидкості, координації та впевненості. Робота на мішку та спаринги з тренером.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>ЗФП</h3>
+                        <p>Загальна фізична підготовка для будь-якого віку та рівня фізичної форми.</p>
+                    </div>
+                    <div class="service-card">
+                        <h3>Харчування</h3>
+                        <p>Усвідомлений підхід без жорстких дієт. Режим, контроль порцій та баланс нутрієнтів.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Gallery Section v1.03 -->
-    <section id="gallery">
-        <div class="container">
-            <h2>Атмосфера залу</h2>
-            <div class="gallery-grid">
-                <div class="gallery-item"><img loading="lazy" src="img_new/boxing_01.jpg" alt="Бокс"></div>
-                <div class="gallery-item"><img loading="lazy" src="img_new/gym_01.jpg" alt="Тренування 1"></div>
-                <div class="gallery-item"><img loading="lazy" src="img_new/gym_06.jpg" alt="Тренування 2"></div>
-                <div class="gallery-item"><img loading="lazy" src="img_new/gym_07.jpg" alt="Тренування 3"></div>
-                <div class="gallery-item"><img loading="lazy" src="img_new/illya_03.jpg" alt="Тренер 1"></div>
-                <div class="gallery-item"><img loading="lazy" src="img_new/illya_07.jpg" alt="Тренер 2"></div>
-                <div class="gallery-item"><img loading="lazy" src="img_new/illya_04.jpg" alt="Тренер 3"></div>
-                <div class="gallery-item"><img loading="lazy" src="img_new/illya_05.jpg" alt="Тренер 4"></div>
+        <!-- Gallery Section -->
+        <section id="gallery">
+            <div class="container">
+                <h2>Атмосфера залу</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item"><img loading="lazy" src="img_new/boxing_01.jpg" alt="Бокс"></div>
+                    <div class="gallery-item"><img loading="lazy" src="img_new/gym_01.jpg" alt="Тренування 1"></div>
+                    <div class="gallery-item"><img loading="lazy" src="img_new/gym_06.jpg" alt="Тренування 2"></div>
+                    <div class="gallery-item"><img loading="lazy" src="img_new/gym_07.jpg" alt="Тренування 3"></div>
+                    <div class="gallery-item"><img loading="lazy" src="img_new/illya_03.jpg" alt="Тренер 1"></div>
+                    <div class="gallery-item"><img loading="lazy" src="img_new/illya_07.jpg" alt="Тренер 2"></div>
+                    <div class="gallery-item"><img loading="lazy" src="img_new/illya_04.jpg" alt="Тренер 3"></div>
+                    <div class="gallery-item"><img loading="lazy" src="img_new/illya_05.jpg" alt="Тренер 4"></div>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section id="videos">
-        <div class="container">
-            <h2>Корисні відео</h2>
-            <div class="video-grid">
-                <!-- Штанга -->
-                <div class="video-item">
-                    <iframe loading="lazy" width="100%" height="250" src="https://www.youtube.com/embed/4V6QVzBrs50" frameborder="0" allowfullscreen></iframe>
-                </div>
-                <div class="video-item">
-                    <iframe loading="lazy" width="100%" height="250" src="https://www.youtube.com/embed/jJd1oOrrFP4" frameborder="0" allowfullscreen></iframe>
-                </div>
-                <div class="video-item">
-                    <iframe loading="lazy" width="100%" height="250" src="https://www.youtube.com/embed/99vClISk9M4" frameborder="0" allowfullscreen></iframe>
+        <!-- Videos Section - Dynamic -->
+        <section id="videos">
+            <div class="container">
+                <h2>Корисні відео</h2>
+                
+                <!-- Filter Tabs -->
+                <div class="video-filter">
+                    <button class="video-filter-tab active" data-filter="all">Все</button>
+                    <button class="video-filter-tab" data-filter="video">Відео</button>
+                    <button class="video-filter-tab" data-filter="short">Shorts</button>
                 </div>
                 
-                <!-- Гиря -->
-                <div class="video-item">
-                    <iframe loading="lazy" width="100%" height="250" src="https://www.youtube.com/embed/BXb4PUKeaQY" frameborder="0" allowfullscreen></iframe>
+                <!-- Video Grid -->
+                <div class="video-grid" id="videos-grid">
+                    <!-- Dynamically loaded from videos_data.json -->
+                    <div class="loading-placeholder">Завантаження відео...</div>
                 </div>
-                <div class="video-item">
-                    <iframe loading="lazy" width="100%" height="250" src="https://www.youtube.com/embed/hoazB8lLX44" frameborder="0" allowfullscreen></iframe>
+                
+                <!-- Load More Button -->
+                <div class="load-more-container" style="text-align: center; margin-top: 30px;">
+                    <button id="load-more-videos" class="cta-button secondary" style="display: none;">
+                        Показати ще
+                    </button>
                 </div>
-                <div class="video-item">
-                    <iframe loading="lazy" width="100%" height="250" src="https://www.youtube.com/embed/RQamibQ8QGg" frameborder="0" allowfullscreen></iframe>
-                </div>
-
-                <!-- Бокс -->
-                <div class="video-item">
-                    <iframe loading="lazy" width="100%" height="250" src="https://www.youtube.com/embed/hDhnvDOLgUk" frameborder="0" allowfullscreen></iframe>
-                </div>
-                <div class="video-item">
-                    <iframe loading="lazy" width="100%" height="250" src="https://www.youtube.com/embed/GR5BvQA6vOc" frameborder="0" allowfullscreen></iframe>
-                </div>
-                <div class="video-item">
-                    <iframe loading="lazy" width="100%" height="250" src="https://www.youtube.com/embed/hkITEPKalKI" frameborder="0" allowfullscreen></iframe>
-                </div>
-            </div>
-            <p style="margin-top: 30px;"><a href="https://www.youtube.com/@tviy_trener" class="cta-button secondary">Більше на YouTube</a></p>
-        </div>
-    </section>
-
-    <section id="blog">
-        <div class="container">
-            <h2>Нотатки тренера</h2>
-            <div class="blog-grid" id="blog-container">
-                <!-- Динамічні пости завантажуються тут -->
-                <p>Завантаження нотаток...</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Modal for Blog Posts -->
-    <div id="blog-modal" class="modal">
-        <div class="modal-content blog-modal-content">
-            <span class="close-blog-modal">&times;</span>
-            <div id="modal-body">
-                <!-- Вміст статті -->
-            </div>
-        </div>
-    </div>
-
-    <section id="registration">
-        <div class="container">
-            <h2>Записатись на тренування</h2>
-            <div class="form-wrapper">
-                <form id="trainerForm">
-                    <div class="input-group">
-                        <input type="text" id="name" name="name" placeholder="Твоє ім'я *" 
-                               oninvalid="this.setCustomValidity('Будь ласка, введіть ваше ім\'я')" 
-                               oninput="this.setCustomValidity('')" required>
-                    </div>
-                    <div class="input-group">
-                        <input type="tel" id="phone" name="phone" placeholder="+380 (__) ___-__-__ *" 
-                               inputmode="numeric" 
-                               pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}"
-                               oninvalid="this.setCustomValidity('Будь ласка, введіть повний номер у форматі +38 (0XX) XXX-XX-XX')" 
-                               oninput="this.setCustomValidity('')" required>
-                    </div>
-                    <div class="input-group">
-                        <select id="goal" name="goal">
-                            <option value="weight_loss">Схуднення</option>
-                            <option value="muscle_gain">Набір маси</option>
-                            <option value="boxing">Бокс / Самооборона</option>
-                            <option value="gpp">Загальна фізична підготовка</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <textarea id="message" name="message" placeholder="Твій коментар або питання"></textarea>
-                    </div>
-                    <button type="submit" class="cta-button">Відправити запит</button>
-                </form>
-                <div id="formStatus" style="margin-top: 20px; font-weight: bold; color: var(--accent);"></div>
-            </div>
-        </div>
-    </section>
-
-    <section id="contacts">
-        <div class="container">
-            <h2>Контакти</h2>
-            <div class="contact-info">
-                <p><strong>Адреса:</strong> м. Львів, Левандівка (кінцева), old school локація</p>
-                <p><strong>Телефон:</strong> <a href="tel:+380505992910">+380 50 599 29 10</a></p>
-                <p style="margin-top: 25px;" class="social-icons">
-                    <a href="https://www.tiktok.com/@tviy_trener" target="_blank" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                    <a href="https://www.youtube.com/@tviy_trener" target="_blank" title="YouTube"><i class="fab fa-youtube"></i></a>
+                
+                <p style="margin-top: 30px; text-align: center;">
+                    <a href="https://www.youtube.com/@tviy_trener" target="_blank" rel="noopener" class="cta-button secondary">
+                        <i class="fab fa-youtube"></i> Більше на YouTube
+                    </a>
                 </p>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Lightbox Modal -->
-    <div id="lightbox" class="lightbox">
-        <span class="close-lightbox">&times;</span>
-        <img loading="lazy" class="lightbox-content" id="lightbox-img">
+        <!-- Blog/Notes Section -->
+        <section id="blog">
+            <div class="container">
+                <h2>Нотатки тренера</h2>
+                <div class="blog-grid" id="blog-container">
+                    <!-- Dynamically loaded from blog_posts.json -->
+                    <p>Завантаження нотаток...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration Form -->
+        <section id="registration">
+            <div class="container">
+                <h2>Записатись на тренування</h2>
+                <div class="form-wrapper">
+                    <form id="trainerForm" novalidate>
+                        <div class="input-group">
+                            <label for="name" class="sr-only">Ім'я</label>
+                            <input type="text" id="name" name="name" placeholder="Твоє ім'я *" required aria-required="true">
+                        </div>
+                        <div class="input-group">
+                            <label for="phone" class="sr-only">Телефон</label>
+                            <input type="tel" id="phone" name="phone" placeholder="+38 (0XX) XXX-XX-XX *" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required aria-required="true">
+                        </div>
+                        <div class="input-group">
+                            <label for="goal" class="sr-only">Ціль тренувань</label>
+                            <select id="goal" name="goal" required aria-required="true">
+                                <option value="weight_loss">Схуднення</option>
+                                <option value="muscle_gain">Набір маси</option>
+                                <option value="boxing">Бокс / Самооборона</option>
+                                <option value="gpp">Загальна фізична підготовка</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="message" class="sr-only">Коментар</label>
+                            <textarea id="message" name="message" placeholder="Твій коментар або питання"></textarea>
+                        </div>
+                        <button type="submit" class="cta-button">Відправити запит</button>
+                    </form>
+                    <div id="formStatus" class="form-status" aria-live="polite"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contacts Section -->
+        <section id="contacts">
+            <div class="container">
+                <h2>Контакти</h2>
+                <div class="contact-info">
+                    <p><strong>Адреса:</strong> м. Львів, Левандівка (кінцева), old school локація</p>
+                    <p><strong>Телефон:</strong> <a href="tel:+380505992910">+380 50 599 29 10</a></p>
+                    <p style="margin-top: 25px;" class="social-icons">
+                        <a href="https://www.tiktok.com/@tviy_trener" target="_blank" rel="noopener" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://www.youtube.com/@tviy_trener" target="_blank" rel="noopener" title="YouTube"><i class="fab fa-youtube"></i></a>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Lightbox Modal for Gallery -->
+    <div id="lightbox" class="lightbox" role="dialog" aria-modal="true" aria-label="Зображення">
+        <span class="close-lightbox" aria-label="Закрити">&times;</span>
+        <img loading="lazy" class="lightbox-content" id="lightbox-img" alt="">
     </div>
 
     <footer>
         <p>&copy; 2026 Ілля Поліщук. Проєкт "Твій Тренер".</p>
     </footer>
 
+    <!-- Main App Script -->
+    <script src="app.js"></script>
+    
+    <!-- Inline scripts for form and lightbox (keep simple) -->
     <script>
-        // Динамічний блог
-        async function loadBlog() {
-            const container = document.getElementById('blog-container');
-            container.innerHTML = '';
-
-            try {
-                const response = await fetch('blog_posts.json');
-                if (!response.ok) throw new Error('Помилка завантаження');
-                const posts = await response.json();
-
-                posts.forEach(post => {
-                    const article = document.createElement('article');
-                    article.className = 'blog-card';
-
-                    const postImg = document.createElement('img');
-                    postImg.src = post.thumbnail;
-                    postImg.alt = post.title;
-                    postImg.className = 'blog-thumbnail';
-
-                    const postTitle = document.createElement('h3');
-                    postTitle.textContent = post.title;
-
-                    const postPreview = document.createElement('p');
-                    postPreview.textContent = post.preview;
-
-                    const postBtn = document.createElement('button');
-                    postBtn.className = 'read-more-btn';
-                    postBtn.textContent = 'Читати далі →';
-                    postBtn.onclick = () => openBlogPost(post);
-
-                    article.appendChild(postImg);
-                    article.appendChild(postTitle);
-                    article.appendChild(postPreview);
-                    article.appendChild(postBtn);
-
-                    container.appendChild(article);
-                });
-            } catch (error) {
-                console.error(error);
-                container.innerHTML = '<p>Не вдалося завантажити нотатки.</p>';
-            }
+        // Phone mask
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.startsWith('0')) {
+                    value = '38' + value;
+                } else if (value.length > 0 && !value.startsWith('38')) {
+                    value = '38' + value;
+                }
+                if (value.length > 12) value = value.slice(0, 12);
+                let x = value.match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+                if (!x[1]) {
+                    e.target.value = '';
+                    return;
+                }
+                let val = '+38';
+                if (x[1] === '38') {
+                    if (x[2]) val += ' (' + x[2];
+                    if (x[3]) val += ') ' + x[3];
+                    if (x[4]) val += '-' + x[4];
+                    if (x[5]) val += '-' + x[5];
+                }
+                e.target.value = val;
+            });
         }
 
-        function parseMarkdown(text) {
-            // Дуже проста заміна для Markdown-подібного тексту
-            return text
-                .replace(/\n\n/g, '</p><p>')
-                .replace(/\n/g, '<br>')
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/!\[(.*?)\]\((.*?)\)/g, '<img src="$2" alt="$1" style="width:100%; border-radius:8px; margin:15px 0;">')
-                .replace(/✅ (.*?)(<br>|$)/g, '<li>✅ $1</li>')
-                .replace(/(<li>.*?<\/li>)+/g, '<ul>$&</ul>')
-                .replace(/---/g, '<hr>');
+        // Form submission - POST to API endpoint
+        const form = document.getElementById('trainerForm');
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const status = document.getElementById('formStatus');
+                const phoneInput = document.getElementById('phone');
+                const phoneValue = phoneInput.value;
+                const phoneRegex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+
+                if (!phoneRegex.test(phoneValue)) {
+                    status.style.color = 'red';
+                    status.innerText = 'Помилка: Будь ласка, введіть повний номер (+38 (0XX) XXX-XX-XX)';
+                    phoneInput.focus();
+                    return;
+                }
+
+                status.style.color = 'var(--accent)';
+                status.innerText = 'Надсилаємо...';
+
+                const formData = {
+                    name: document.getElementById('name').value,
+                    phone: phoneValue,
+                    goal: document.getElementById('goal').options[document.getElementById('goal').selectedIndex].text,
+                    message: document.getElementById('message').value
+                };
+
+                try {
+                    // Use relative URL for same-origin, or configure API endpoint
+                    const apiUrl = '/api/register';  // Will be proxied by Cloudflare Pages Functions or similar
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        status.style.color = 'green';
+                        status.innerText = 'Заявку прийнято! Ілля зв\'яжеться з вами найближчим часом.';
+                        form.reset();
+                    } else {
+                        status.style.color = 'red';
+                        status.innerText = result.error || 'Помилка відправки. Спробуйте пізніше або зателефонуйте.';
+                    }
+                } catch (err) {
+                    status.style.color = 'red';
+                    status.innerText = 'Помилка з\'єднання. Спробуйте пізніше або зателефонуйте.';
+                }
+            });
         }
 
-        async function openBlogPost(summary) {
-            const modal = document.getElementById('blog-modal');
-            const body = document.getElementById('modal-body');
-
-            body.innerHTML = '<p style="text-align:center; padding: 40px;">Завантаження...</p>';
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
-
-            try {
-                const response = await fetch(`posts/${summary.id}.json`);
-                if (!response.ok) throw new Error('Помилка завантаження вмісту');
-                const post = await response.json();
-
-                body.innerHTML = '';
-
-                const postImg = document.createElement('img');
-                postImg.src = post.thumbnail;
-                postImg.alt = post.title;
-                postImg.style.cssText = "width:100%; max-height:400px; object-fit:cover; border-radius:8px; margin-bottom:20px;";
-
-                const postTitle = document.createElement('h2');
-                postTitle.textContent = post.title;
-
-                const postFullText = document.createElement('div');
-                postFullText.className = 'blog-full-text';
-                // Використовуємо innerHTML для відрендереного AI тексту, але тільки після санітизації/парсингу
-                // Оскільки ми контролюємо процес генерації в generate_blog_posts.py, це відносно безпечно
-                postFullText.innerHTML = '<p>' + parseMarkdown(post.text) + '</p>';
-
-                const footerDiv = document.createElement('div');
-                footerDiv.style.cssText = "margin-top:30px; border-top:1px solid #444; padding-top:20px;";
-
-                const videoLink = document.createElement('a');
-                videoLink.href = post.url;
-                videoLink.target = "_blank";
-                videoLink.className = "cta-button secondary";
-                videoLink.textContent = "Дивитись відео на YouTube";
-
-                footerDiv.appendChild(videoLink);
-
-                body.appendChild(postImg);
-                body.appendChild(postTitle);
-                body.appendChild(postFullText);
-                body.appendChild(footerDiv);
-            } catch (error) {
-                console.error(error);
-                body.innerHTML = '<p style="text-align:center; color:red; padding:40px;">Не вдалося завантажити пост. Спробуйте пізніше.</p>';
-            }
-        }
-
-        const blogModal = document.getElementById('blog-modal');
-        const closeBlogBtn = document.querySelector('.close-blog-modal');
-
-        closeBlogBtn.onclick = () => {
-            blogModal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        };
-
-        window.onclick = (event) => {
-            if (event.target == blogModal) {
-                blogModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }
-        };
-
-        loadBlog();
-
-        // Лайтбокс
+        // Lightbox for gallery
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
         const closeBtn = document.querySelector('.close-lightbox');
@@ -386,137 +394,43 @@
             img.addEventListener('click', () => {
                 lightbox.style.display = 'block';
                 lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt || '';
             });
         });
 
-        closeBtn.addEventListener('click', () => {
-            lightbox.style.display = 'none';
-        });
-
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
                 lightbox.style.display = 'none';
-            }
-        });
+            });
+        }
 
-        // Мобільне меню
+        if (lightbox) {
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    lightbox.style.display = 'none';
+                }
+            });
+        }
+
+        // Mobile menu
         const mobileMenu = document.getElementById('mobile-menu');
         const navList = document.querySelector('.nav-list');
-
-        mobileMenu.addEventListener('click', () => {
-            navList.classList.toggle('active');
-            const icon = mobileMenu.querySelector('i');
-            icon.classList.toggle('fa-bars');
-            icon.classList.toggle('fa-times');
-        });
-
-        // Закриття меню при кліку на посилання
-        document.querySelectorAll('.nav-list a').forEach(link => {
-            link.addEventListener('click', () => {
-                navList.classList.remove('active');
+        if (mobileMenu && navList) {
+            mobileMenu.addEventListener('click', () => {
+                navList.classList.toggle('active');
                 const icon = mobileMenu.querySelector('i');
-                icon.classList.add('fa-bars');
-                icon.classList.remove('fa-times');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
             });
-        });
-
-        // Проста маска для телефону
-        const phoneInput = document.getElementById('phone');
-        phoneInput.addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            
-            // Якщо номер починається з 0, додаємо 38 попереду
-            if (value.startsWith('0')) {
-                value = '38' + value;
-            } else if (value.length > 0 && !value.startsWith('38')) {
-                // Якщо введено не з 38 і не з 0, примусово ставимо 38
-                value = '38' + value;
-            }
-            
-            // Обмежуємо 12 цифрами (380XXXXXXXXX)
-            if (value.length > 12) value = value.slice(0, 12);
-            
-            let x = value.match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
-            
-            if (!x[1]) {
-                e.target.value = '';
-                return;
-            }
-
-            let val = '+38';
-            if (x[1] === '38') {
-                if (x[2]) val += ' (' + x[2];
-                if (x[3]) val += ') ' + x[3];
-                if (x[4]) val += '-' + x[4];
-                if (x[5]) val += '-' + x[5];
-            }
-            e.target.value = val;
-        });
-
-        document.getElementById('trainerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const phoneInput = document.getElementById('phone');
-            const phoneValue = phoneInput.value;
-            // Суворий формат: +38 (0XX) XXX-XX-XX
-            const phoneRegex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
-
-            if (!phoneRegex.test(phoneValue)) {
-                const status = document.getElementById('formStatus');
-                status.style.color = 'red';
-                status.innerText = 'Помилка: Будь ласка, введіть повний номер (+38 (0XX) XXX-XX-XX)';
-                phoneInput.focus();
-                return;
-            }
-
-            const status = document.getElementById('formStatus');
-            status.style.color = 'var(--accent)';
-            status.innerText = 'Надсилаємо...';
-            
-            const name = document.getElementById('name').value;
-            const phone = document.getElementById('phone').value;
-            const goal = document.getElementById('goal').options[document.getElementById('goal').selectedIndex].text;
-            const message = document.getElementById('message').value;
-
-            // --- КОНФІГУРАЦІЯ TELEGRAM ---
-            // УВАГА: Зберігання токена на фронтенді є небезпечним (його можуть викрасти).
-            // Для реального проєкту рекомендується створити невеликий бекенд (Node.js/Python),
-            // який буде пересилати повідомлення, приховуючи токен.
-
-            const TG_CONFIG = {
-                token: '8506794921:AAHIrLIDtRhgXPmEXdIhY6vUKO7WGXIOuvU', // @BotFather
-                chatId: '5192950042'           // ID Іллі
-            };
-
-            if (TG_CONFIG.token === 'ВАШ_TELEGRAM_BOT_TOKEN' || !TG_CONFIG.token) {
-                console.warn('Telegram token is not configured.');
-                status.innerText = 'Помилка конфігурації. Будь ласка, зв’яжіться з нами по телефону.';
-                return;
-            }
-
-            const text = `🚀 Нова заявка з сайту!\n\n👤 Ім'я: ${name}\n📞 Телефон: ${phone}\n🎯 Ціль: ${goal}\n💬 Повідомлення: ${message}`;
-
-            fetch(`https://api.telegram.org/bot${TG_CONFIG.token}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: TG_CONFIG.chatId, text: text })
-            })
-            .then(response => {
-                console.log('Telegram API response:', response);
-                if (response.ok) {
-                    status.innerText = 'Дякуємо! Ваша заявка прийнята. Ілля зв\'яжеться з вами найближчим часом.';
-                    e.target.reset();
-                } else {
-                    response.json().then(data => {
-                        console.error('Telegram error details:', data);
-                        status.innerText = `Помилка: ${data.description || 'невідома помилка'}`;
-                    });
-                }
-            })
-            .catch(() => {
-                status.innerText = 'Помилка мережі. Перевірте з\'єднання.';
+            document.querySelectorAll('.nav-list a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navList.classList.remove('active');
+                    const icon = mobileMenu.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
+                });
             });
-        });
+        }
     </script>
 </body>
 </html>

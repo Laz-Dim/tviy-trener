@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{DESCRIPTION}}">
+    <title>{{TITLE}} — Твій Тренер</title>
+    <link rel="canonical" href="{{CANONICAL_URL}}">
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{OG_URL}}">
+    <meta property="og:title" content="{{OG_TITLE}}">
+    <meta property="og:description" content="{{OG_DESCRIPTION}}">
+    <meta property="og:image" content="{{OG_IMAGE}}">
+    <meta property="article:author" content="{{AUTHOR_NAME}}">
+    <meta property="article:published_time" content="{{PUBLISHED_DATE}}">
+    <meta property="article:modified_time" content="{{MODIFIED_DATE}}">
+    <meta property="article:section" content="{{CATEGORY}}">
+    <meta property="article:tag" content="{{TAGS}}">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{OG_TITLE}}">
+    <meta name="twitter:description" content="{{OG_DESCRIPTION}}">
+    <meta name="twitter:image" content="{{OG_IMAGE}}">
+    
+    <!-- Schema.org BlogPosting -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": "{{TITLE}}",
+        "description": "{{DESCRIPTION}}",
+        "image": "{{OG_IMAGE}}",
+        "url": "{{CANONICAL_URL}}",
+        "datePublished": "{{PUBLISHED_DATE}}",
+        "dateModified": "{{MODIFIED_DATE}}",
+        "author": {
+            "@type": "Person",
+            "name": "{{AUTHOR_NAME}}"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Твій Тренер",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://tviy-trener.com/img_new/logo.jpg"
+            }
+        },
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "{{CANONICAL_URL}}"
+        }
+    }
+    </script>
+    
+    <link rel="icon" type="image/jpeg" href="img_new/logo.jpg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">ТВІЙ<span>ТРЕНЕР</span></div>
+            <div class="menu-toggle" id="mobile-menu">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-list">
+                <li><a href="index.html#about">Філософія</a></li>
+                <li><a href="index.html#services">Послуги</a></li>
+                <li><a href="index.html#videos">Відео</a></li>
+                <li><a href="index.html#blog">Нотатки</a></li>
+                <li><a href="index.html#contacts">Контакти</a></li>
+                <li><a href="index.html#registration" class="nav-cta">Записатись</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <article class="blog-post">
+            <header class="blog-post-header">
+                <span class="blog-badge">{{CATEGORY}}</span>
+                <h1>{{TITLE}}</h1>
+                <div class="blog-post-meta">
+                    <time datetime="{{PUBLISHED_DATE}}">{{PUBLISHED_DATE}}</time>
+                    <span class="reading-time">{{READING_TIME}}</span>
+                </div>
+            </header>
+            
+            {% if OG_IMAGE and OG_IMAGE != "https://tviy-trener.com/img_new/logo.jpg" %}
+            <figure class="blog-post-image">
+                <img src="{{OG_IMAGE}}" alt="{{TITLE}}" loading="lazy">
+            </figure>
+            {% endif %}
+            
+            <div class="blog-post-content">
+                {{ARTICLE_CONTENT}}
+            </div>
+            
+            <footer class="blog-post-footer">
+                <div class="blog-post-tags">
+                    {% for tag in TAGS.split(', ') %}
+                    <span class="tag">{{tag}}</span>
+                    {% endfor %}
+                </div>
+                <a href="index.html#blog" class="cta-button secondary">← Назад до нотаток</a>
+            </footer>
+        </article>
+    </main>
+
+    <section id="registration">
+        <div class="container">
+            <h2>Записатись на тренування</h2>
+            <div class="form-wrapper">
+                <form id="trainerForm">
+                    <div class="input-group">
+                        <input type="text" id="name" name="name" placeholder="Твоє ім'я *" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="tel" id="phone" name="phone" placeholder="+38 (0XX) XXX-XX-XX *" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required>
+                    </div>
+                    <div class="input-group">
+                        <select id="goal" name="goal">
+                            <option value="weight_loss">Схуднення</option>
+                            <option value="muscle_gain">Набір маси</option>
+                            <option value="boxing">Бокс / Самооборона</option>
+                            <option value="gpp">Загальна фізична підготовка</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <textarea id="message" name="message" placeholder="Твій коментар або питання"></textarea>
+                    </div>
+                    <button type="submit" class="cta-button">Відправити запит</button>
+                </form>
+                <div id="formStatus" style="margin-top: 20px; font-weight: bold; color: var(--accent);"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Ілля Поліщук. Проєкт "Твій Тренер".</p>
+    </footer>
+
+    <script>
+        // Phone mask
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+            phoneInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.startsWith('0')) {
+                    value = '38' + value;
+                } else if (value.length > 0 && !value.startsWith('38')) {
+                    value = '38' + value;
+                }
+                if (value.length > 12) value = value.slice(0, 12);
+                let x = value.match(/(\d{0,2})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+                if (!x[1]) {
+                    e.target.value = '';
+                    return;
+                }
+                let val = '+38';
+                if (x[1] === '38') {
+                    if (x[2]) val += ' (' + x[2];
+                    if (x[3]) val += ') ' + x[3];
+                    if (x[4]) val += '-' + x[4];
+                    if (x[5]) val += '-' + x[5];
+                }
+                e.target.value = val;
+            });
+        }
+
+        // Form submission
+        const form = document.getElementById('trainerForm');
+        if (form) {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const status = document.getElementById('formStatus');
+                const phoneInput = document.getElementById('phone');
+                const phoneValue = phoneInput.value;
+                const phoneRegex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
+
+                if (!phoneRegex.test(phoneValue)) {
+                    status.style.color = 'red';
+                    status.innerText = 'Помилка: Будь ласка, введіть повний номер (+38 (0XX) XXX-XX-XX)';
+                    phoneInput.focus();
+                    return;
+                }
+
+                status.style.color = 'var(--accent)';
+                status.innerText = 'Надсилаємо...';
+
+                const formData = {
+                    name: document.getElementById('name').value,
+                    phone: phoneValue,
+                    goal: document.getElementById('goal').options[document.getElementById('goal').selectedIndex].text,
+                    message: document.getElementById('message').value
+                };
+
+                try {
+                    const response = await fetch('https://tviy-trener.com/api/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        status.style.color = 'green';
+                        status.innerText = 'Заявку прийнято! Ілля зв\'яжеться з вами найближчим часом.';
+                        form.reset();
+                    } else {
+                        status.style.color = 'red';
+                        status.innerText = result.error || 'Помилка відправки. Спробуйте пізніше або зателефонуйте.';
+                    }
+                } catch (err) {
+                    status.style.color = 'red';
+                    status.innerText = 'Помилка з\'єднання. Спробуйте пізніше або зателефонуйте.';
+                }
+            });
+        }
+
+        // Mobile menu
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navList = document.querySelector('.nav-list');
+        if (mobileMenu && navList) {
+            mobileMenu.addEventListener('click', () => {
+                navList.classList.toggle('active');
+                const icon = mobileMenu.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
+            });
+            document.querySelectorAll('.nav-list a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navList.classList.remove('active');
+                    const icon = mobileMenu.querySelector('i');
+                    icon.classList.add('fa-bars');
+                    icon.classList.remove('fa-times');
+                });
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Адмінка — Твій Тренер</title>
+    <link rel="icon" type="image/jpeg" href="img_new/logo.jpg">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* Admin-specific styles */
+        .admin-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .admin-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        .admin-header p {
+            color: var(--text-gray);
+        }
+        
+        /* Login Form */
+        .login-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .login-form h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .login-form .input-group {
+            margin-bottom: 20px;
+        }
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .login-form input {
+            width: 100%;
+            padding: 15px;
+            background: #252525;
+            border: 1px solid var(--border);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .login-form .btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+        .login-form .status {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+        .login-form .status.success { color: green; }
+        .login-form .status.error { color: #ff6b6b; }
+        .login-form .status.info { color: var(--accent); }
+        
+        /* Admin Dashboard */
+        .admin-dashboard {
+            display: none; /* hidden until logged in */
+        }
+        .admin-dashboard.visible {
+            display: block;
+        }
+        .admin-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .admin-tab {
+            padding: 12px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-white);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .admin-tab:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .admin-tab.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
+        }
+        .admin-panel {
+            display: none;
+        }
+        .admin-panel.active {
+            display: block;
+        }
+        
+        /* Post Form */
+        .post-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+        }
+        .post-form .input-group {
+            margin-bottom: 20px;
+        }
+        .post-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .post-form input,
+        .post-form select,
+        .post-form textarea {
+            width: 100%;
+            padding: 15px;
+            background: #252525;
+            border: 1px solid var(--border);
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        .post-form textarea {
+            height: 300px;
+            resize: vertical;
+        }
+        .post-form input:focus,
+        .post-form select:focus,
+        .post-form textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        .post-form .helper-text {
+            font-size: 12px;
+            color: var(--text-gray);
+            margin-top: 5px;
+        }
+        .post-form .image-preview {
+            margin-top: 10px;
+            max-width: 300px;
+            border-radius: 8px;
+            display: none;
+        }
+        .post-form .image-preview.visible {
+            display: block;
+        }
+        .post-form .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .post-form .btn {
+            flex: 1;
+            min-width: 200px;
+        }
+        .post-form .btn.secondary {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+        }
+        
+        /* Posts List */
+        .posts-list {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .posts-list-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .posts-list-header h3 {
+            font-size: 18px;
+            margin: 0;
+        }
+        .post-row {
+            display: grid;
+            grid-template-columns: 60px 1fr 120px 100px 100px;
+            gap: 15px;
+            align-items: center;
+            padding: 15px 30px;
+            border-bottom: 1px solid var(--border);
+        }
+        .post-row:last-child {
+            border-bottom: none;
+        }
+        .post-row-header {
+            font-weight: 900;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--text-gray);
+            letter-spacing: 0.5px;
+        }
+        .post-thumb {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .post-title-cell {
+            font-weight: 700;
+        }
+        .post-category {
+            background: var(--accent);
+            color: #000;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            border-radius: 3px;
+        }
+        .post-date {
+            font-size: 13px;
+            color: var(--text-gray);
+        }
+        .post-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .post-actions .btn {
+            padding: 8px 16px;
+            font-size: 12px;
+        }
+        .post-actions .btn.danger {
+            background: #c0392b;
+            border-color: #c0392b;
+        }
+        .post-actions .btn.danger:hover {
+            background: #e74c3c;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .post-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                text-align: center;
+            }
+            .post-row-header {
+                display: none;
+            }
+            .post-thumb {
+                margin: 0 auto;
+            }
+            .post-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">ТВІЙ<span>ТРЕНЕР</span></div>
+            <ul class="nav-list">
+                <li><a href="index.html">Головна</a></li>
+                <li><a href="index.html#videos">Відео</a></li>
+                <li><a href="index.html#blog">Нотатки</a></li>
+                <li><a href="index.html#contacts">Контакти</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="admin-container">
+            <div class="admin-header">
+                <h1><i class="fas fa-cog"></i> Адмін-панель</h1>
+                <p>Управління нотатками тренера</p>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginSection" class="login-form">
+                <h2>Вхід через Telegram OTP</h2>
+                <p style="text-align: center; color: var(--text-gray); margin-bottom: 20px;">
+                    Код буде надіслано в Telegram ботом
+                </p>
+                
+                <div class="input-group">
+                    <label for="telegramId">Telegram Chat ID або @username</label>
+                    <input type="text" id="telegramId" placeholder="5192950042 або @username" value="5192950042">
+                </div>
+                
+                <div class="input-group">
+                    <button type="button" class="cta-button" id="sendCodeBtn">
+                        <i class="fas fa-paper-plane"></i> Отримати код
+                    </button>
+                </div>
+                
+                <div class="input-group" id="codeGroup" style="display: none;">
+                    <label for="otpCode">Одноразовий код (6 цифр)</label>
+                    <input type="text" id="otpCode" placeholder="123456" inputmode="numeric" maxlength="6" pattern="\d{6}">
+                </div>
+                
+                <div class="input-group" id="verifyGroup" style="display: none;">
+                    <button type="button" class="cta-button" id="verifyCodeBtn">
+                        <i class="fas fa-lock-open"></i> Увійти
+                    </button>
+                </div>
+                
+                <div id="loginStatus" class="status"></div>
+            </div>
+
+            <!-- Admin Dashboard -->
+            <div id="dashboardSection" class="admin-dashboard">
+                <div class="admin-tabs">
+                    <button class="admin-tab active" data-tab="create">Створити нотатку</button>
+                    <button class="admin-tab" data-tab="list">Список нотаток</button>
+                </div>
+
+                <!-- Create Post Panel -->
+                <div id="createPanel" class="admin-panel active">
+                    <form id="postForm" class="post-form" novalidate>
+                        <h2 style="margin-bottom: 30px; text-align: center;">Нова нотатка</h2>
+                        
+                        <div class="input-group">
+                            <label for="postTitle">Заголовок *</label>
+                            <input type="text" id="postTitle" name="title" placeholder="Наприклад: Як правильно їсти для набору маси" required>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="postSlug">Slug (ЧПУ) *</label>
+                            <input type="text" id="postSlug" name="slug" placeholder="yak-pravilno-yisti-dlya-naboru-masi" required>
+                            <p class="helper-text">Автогенерується з заголовку. Латиниця, цифри, дефіси.</p>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="postCategory">Категорія *</label>
+                            <select id="postCategory" name="category" required>
+                                <option value="nutrition">🍽 Харчування</option>
+                                <option value="training">💪 Тренування</option>
+                                <option value="mindset">🧠 Психологія / Mindset</option>
+                                <option value="recovery">🛌 Відновлення</option>
+                                <option value="boxing">🥊 Бокс</option>
+                                <option value="general">📝 Загальне</option>
+                            </select>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="postTags">Теги (через кому)</label>
+                            <input type="text" id="postTags" name="tags" placeholder="схуднення, макронутрієнти, дефіцит калорій">
+                            <p class="helper-text">Для фільтрації та SEO</p>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="postDescription">Короткий опис (для прев'ю) *</label>
+                            <textarea id="postDescription" name="description" rows="3" placeholder="Короткий опис, що відображається в картці нотатки..." required></textarea>
+                    <p class="helper-text">Максимум 300 символів</p>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="postContent">Повний текст (Markdown) *</label>
+                            <textarea id="postContent" name="content" placeholder="# Заголовок H1
+## Підзаголовок H2
+**Жирний текст**
+*Курсив*
+- Список
+- Пункт 2
+1. Нумерований список
+[Посилання](https://example.com)
+![Зображення](url)" required></textarea>
+                            <p class="helper-text">Підтримка: # заголовки, **жирний**, *курсив*, списки, посилання, зображення</p>
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="postImage">Зображення (опціонально)</label>
+                            <input type="file" id="postImage" name="image" accept="image/*">
+                            <p class="helper-text">Рекомендовано: 1200x630px, JPG/WebP, до 2MB</p>
+                            <img id="imagePreview" class="image-preview" alt="Preview">
+                        </div>
+                        
+                        <div class="input-group">
+                            <label for="postDate">Дата публікації</label>
+                            <input type="date" id="postDate" name="date">
+                            <p class="helper-text">Порожньо = сьогодні</p>
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="submit" class="cta-button">
+                                <i class="fas fa-save"></i> Зберегти як чернетку
+                            </button>
+                            <button type="button" class="cta-button secondary" id="publishBtn">
+                                <i class="fas fa-rocket"></i> Опублікувати
+                            </button>
+                        </div>
+                        
+                        <div id="postStatus" class="status" style="margin-top: 20px;"></div>
+                    </form>
+                </div>
+
+                <!-- Posts List Panel -->
+                <div id="listPanel" class="admin-panel">
+                    <div class="posts-list-header">
+                        <h3>Опубліковані нотатки</h3>
+                        <button type="button" class="cta-button secondary" id="refreshPostsBtn" style="padding: 8px 16px; font-size: 13px;">
+                            <i class="fas fa-sync"></i> Оновити
+                        </button>
+                    </div>
+                    <div class="posts-list" id="postsList">
+                        <div class="post-row post-row-header">
+                            <span>Фото</span>
+                            <span>Заголовок</span>
+                            <span>Категорія</span>
+                            <span>Дата</span>
+                            <span>Дії</span>
+                        </div>
+                        <div id="postsListBody">
+                            <p style="padding: 40px; text-align: center; color: var(--text-gray);">Завантаження...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Ілля Поліщук. Адмін-панель "Твій Тренер".</p>
+    </footer>
+
+    <script src="admin.js"></script>
+</body>
+</html>

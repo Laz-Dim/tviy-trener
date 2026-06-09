@@ -1,0 +1,70 @@
+name: Update Site Data
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # щоденно о 06:00 UTC
+  workflow_dispatch:      # ручний запуск
+
+permissions:
+  contents: write  # потрібно для пушу комітів
+
+jobs:
+  update-videos:
+    name: Fetch YouTube Videos
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}  # PAT для пушу
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch videos from YouTube
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python get_videos.py
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add videos_data.json
+          git diff --staged --quiet || git commit -m "chore: update videos data [skip ci]"
+          git push
+
+  generate-blog:
+    name: Generate Blog Pages
+    runs-on: ubuntu-latest
+    # Запускається тільки якщо змінився blog_posts.json (наприклад, після пушу з адмінки)
+    if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'blog_posts.json') || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate blog pages + sitemap
+        run: python generate_blog.py
+
+      - name: Commit and push generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add blog-*.html sitemap.xml blog_posts.json
+          git diff --staged --quiet || git commit -m "chore: generate blog pages + sitemap [skip ci]"
+          git push

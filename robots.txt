@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tviy-trener.com/sitemap.xml
+
+# Disallow admin panel
+Disallow: /admin.html
+Disallow: /admin.js
+Disallow: /functions/
+Disallow: /api/
+Disallow: /*.json$
