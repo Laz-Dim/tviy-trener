@@ -17,9 +17,9 @@ cwd = "."
 # NODE_ENV = "production"
 
 # KV namespace for OTP storage (create via: wrangler kv:namespace create "OTP_KV")
-# [[kv_namespaces]]
-# binding = "OTP_KV"
-# id = "your-kv-namespace-id"
+ [[kv_namespaces]]
+ binding = "OTP_KV"
+ id = "112a6b6f44ca43fe8863ed308172f231"
 # preview_id = "your-preview-kv-namespace-id"
 
 # Workers functions are auto-discovered from functions/ directory
