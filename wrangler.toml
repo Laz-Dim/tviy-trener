@@ -1,11 +1,10 @@
 name = "tviy-trener"
-compatibility_date = "2024-01-01"
+compatibility_date = "2026-06-01"
 pages_build_output_dir = "."
 
+
 # Cloudflare Pages configuration
-[build]
-command = "echo 'Static site - no build needed'"
-cwd = "."
+
 
 # Custom domains (configure in Cloudflare dashboard after deployment)
 # [[routes]]
@@ -22,8 +21,6 @@ cwd = "."
  id = "112a6b6f44ca43fe8863ed308172f231"
 # preview_id = "your-preview-kv-namespace-id"
 
-[assets]
-directory = "."
 
 # Workers functions are auto-discovered from functions/ directory
 # Functions will be available at:
