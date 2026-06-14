@@ -207,6 +207,7 @@ nav {
 
 section {
     padding: 40px 0;
+    scroll-margin-top: 90px;
 }
 
 h2 {
@@ -1184,6 +1185,7 @@ a.logo:hover {
     }
     section {
         padding: 20px 0;
+        scroll-margin-top: 70px;
     }
     h2 {
         font-size: 28px;
