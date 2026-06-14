@@ -49,7 +49,6 @@ jobs:
     name: Generate Blog Pages
     runs-on: ubuntu-latest
     # Запускається тільки якщо змінився blog_posts.json (наприклад, після пушу з адмінки)
-    if: github.event_name == 'push' && contains(github.event.head_commit.modified, 'blog_posts.json') || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
