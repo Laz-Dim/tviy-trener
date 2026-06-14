@@ -4,11 +4,23 @@
  * Body: { name, phone, goal, message }
  */
 export async function onRequestPost({ request, env }) {
-  // CORS headers
+  const origin = request.headers.get('Origin');
+  const allowedOrigins = [
+    'https://tviy-trener.com',
+    'https://sndbx-temp.tviy-trener.com',
+    'https://tviy-trener.pages.dev'
+  ];
+  
+  let allowedOrigin = 'https://tviy-trener.com';
+  if (origin && (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+    allowedOrigin = origin;
+  }
+
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': 'true'
   };
 
   // Handle preflight
@@ -24,7 +36,42 @@ export async function onRequestPost({ request, env }) {
   }
 
   try {
-    const { name, phone, goal, message } = await request.json();
+    const { name, phone, goal, message, website } = await request.json();
+
+    // 1. Honeypot check (anti-spam trap)
+    // If the hidden field is filled, pretend it succeeded but drop it silently
+    if (website) {
+      console.warn('Spam bot detected via honeypot');
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 2. Rate Limiting via Cloudflare KV database (max 3 per 15 minutes)
+    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const kvKey = `rate:${ip}`;
+    
+    if (env.OTP_KV) {
+      const stored = await env.OTP_KV.get(kvKey, { type: 'json' });
+      if (stored) {
+        if (stored.count >= 3) {
+          return new Response(JSON.stringify({ error: 'Ви перевищили ліміт відправок. Спробуйте знову через 15 хвилин або зателефонуйте.' }), {
+            status: 429,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        // Increment attempts
+        await env.OTP_KV.put(kvKey, JSON.stringify({ count: stored.count + 1 }), {
+          expirationTtl: 900 // 15 minutes TTL in seconds
+        });
+      } else {
+        // Initialize attempts
+        await env.OTP_KV.put(kvKey, JSON.stringify({ count: 1 }), {
+          expirationTtl: 900
+        });
+      }
+    }
 
     // Validation
     if (!name || !phone || !goal) {
@@ -96,12 +143,25 @@ export async function onRequestPost({ request, env }) {
 }
 
 // Handle OPTIONS for CORS
-export async function onRequestOptions() {
+export async function onRequestOptions({ request }) {
+  const origin = request.headers.get('Origin');
+  const allowedOrigins = [
+    'https://tviy-trener.com',
+    'https://sndbx-temp.tviy-trener.com',
+    'https://tviy-trener.pages.dev'
+  ];
+  
+  let allowedOrigin = 'https://tviy-trener.com';
+  if (origin && (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+    allowedOrigin = origin;
+  }
+
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': allowedOrigin,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Credentials': 'true'
     }
   });
 }

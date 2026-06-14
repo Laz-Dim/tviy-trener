@@ -4,10 +4,23 @@
  */
 
 export async function onRequestPost({ request, env }) {
+  const origin = request.headers.get('Origin');
+  const allowedOrigins = [
+    'https://tviy-trener.com',
+    'https://sndbx-temp.tviy-trener.com',
+    'https://tviy-trener.pages.dev'
+  ];
+  
+  let allowedOrigin = 'https://tviy-trener.com';
+  if (origin && (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+    allowedOrigin = origin;
+  }
+
   const corsHeaders = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': 'true'
   };
 
   try {
@@ -230,12 +243,25 @@ export async function onRequestPost({ request, env }) {
   }
 }
 
-export async function onRequestOptions() {
+export async function onRequestOptions({ request }) {
+  const origin = request.headers.get('Origin');
+  const allowedOrigins = [
+    'https://tviy-trener.com',
+    'https://sndbx-temp.tviy-trener.com',
+    'https://tviy-trener.pages.dev'
+  ];
+  
+  let allowedOrigin = 'https://tviy-trener.com';
+  if (origin && (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+    allowedOrigin = origin;
+  }
+
   return new Response(null, {
     headers: {
-      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Origin': allowedOrigin,
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Credentials': 'true'
     }
   });
 }
