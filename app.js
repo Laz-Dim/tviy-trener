@@ -187,6 +187,13 @@ function createBlogCard(post) {
         <a href="blog-${escapeHtml(slug)}.html" class="read-more-btn">Читати далі →</a>
     `;
     
+    // Make entire card clickable
+    card.addEventListener('click', (e) => {
+        if (!e.target.closest('.read-more-btn')) {
+            window.location.href = `blog-${escapeHtml(slug)}.html`;
+        }
+    });
+    
     return card;
 }
 
