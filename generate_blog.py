@@ -42,67 +42,94 @@ def slugify(text):
     return slug.strip('-')
 
 def parse_markdown(text):
-    """Simple Markdown to HTML conversion."""
+    """Robust Markdown to HTML conversion."""
     if not text:
         return ""
+    
+    # Normalize line endings
+    text = text.replace('\r\n', '\n').replace('\r', '\n')
+    
     # Escape HTML first
     text = text.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
     
-    # Bold and italic
+    # Inline links: [text](url) -> <a href="url">text</a>
+    text = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', text)
+    # Inline bold & italic
     text = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', text)
     text = re.sub(r'_(.+?)_', r'<em>\1</em>', text)
     
-    # Headers
-    text = re.sub(r'^### (.+)$', r'<h3>\1</h3>', text, flags=re.MULTILINE)
-    text = re.sub(r'^## (.+)$', r'<h2>\1</h2>', text, flags=re.MULTILINE)
-    text = re.sub(r'^# (.+)$', r'<h1>\1</h1>', text, flags=re.MULTILINE)
-    
-    # Lists
     lines = text.split('\n')
-    in_list = False
-    result = []
+    output = []
+    
+    in_list = None  # 'ul', 'ol', or None
+    paragraph_accum = []
+    
+    def close_list_if_open():
+        nonlocal in_list
+        if in_list == 'ul':
+            output.append('</ul>')
+        elif in_list == 'ol':
+            output.append('</ol>')
+        in_list = None
+
+    def close_paragraph_if_open():
+        if paragraph_accum:
+            p_text = ' '.join(paragraph_accum).strip()
+            if p_text:
+                output.append(f'<p>{p_text}</p>')
+            paragraph_accum.clear()
+
     for line in lines:
-        if line.startswith('- ') or line.startswith('* '):
-            if not in_list:
-                result.append('<ul>')
-                in_list = True
-            result.append(f'<li>{line[2:]}</li>')
-        elif NUMBERED_LIST_PATTERN.match(line):
-            if not in_list:
-                result.append('<ol>')
-                in_list = True
-            # Remove the number prefix
-            clean_line = NUMBERED_LIST_PATTERN.sub('', line)
-            result.append(f'<li>{clean_line}</li>')
-        else:
-            if in_list:
-                # Close list
-                if result and ('<ul>' in result[-1] or any('<ul>' in x for x in result[-3:])):
-                    result.append('</ul>')
-                else:
-                    result.append('</ol>')
-                in_list = False
-            result.append(line)
-    if in_list:
-        result.append('</ul>')
-    text = '\n'.join(result)
-    
-    # Paragraphs - split by double newline
-    paragraphs = text.split('\n\n')
-    html_paragraphs = []
-    for p in paragraphs:
-        p = p.strip()
-        if not p:
+        stripped = line.strip()
+        
+        # 1. Headers
+        header_match = re.match(r'^(#{1,6})\s+(.+)$', stripped)
+        if header_match:
+            close_list_if_open()
+            close_paragraph_if_open()
+            level = len(header_match.group(1))
+            header_text = header_match.group(2)
+            output.append(f'<h{level}>{header_text}</h{level}>')
             continue
-        # Don't wrap already block elements
-        if re.match(r'^<(h[1-6]|ul|ol|li|blockquote|hr|pre)', p):
-            html_paragraphs.append(p)
-        else:
-            # Convert single newlines to <br>
-            p = p.replace('\n', '<br>')
-            html_paragraphs.append(f'<p>{p}</p>')
+            
+        # 2. Unordered lists
+        ul_match = re.match(r'^[-*]\s+(.+)$', stripped)
+        if ul_match:
+            close_paragraph_if_open()
+            item_text = ul_match.group(1)
+            if in_list != 'ul':
+                close_list_if_open()
+                output.append('<ul>')
+                in_list = 'ul'
+            output.append(f'<li>{item_text}</li>')
+            continue
+            
+        # 3. Ordered lists
+        ol_match = re.match(r'^(\d+)\.\s+(.+)$', stripped)
+        if ol_match:
+            close_paragraph_if_open()
+            item_text = ol_match.group(2)
+            if in_list != 'ol':
+                close_list_if_open()
+                output.append('<ol>')
+                in_list = 'ol'
+            output.append(f'<li>{item_text}</li>')
+            continue
+            
+        # 4. Empty line
+        if not stripped:
+            close_list_if_open()
+            close_paragraph_if_open()
+            continue
+            
+        # 5. Normal paragraph text
+        close_list_if_open()
+        paragraph_accum.append(stripped)
+        
+    close_list_if_open()
+    close_paragraph_if_open()
     
-    return ''.join(html_paragraphs)
+    return '\n'.join(output)
 
 def load_template():
     """Load the blog template HTML."""
