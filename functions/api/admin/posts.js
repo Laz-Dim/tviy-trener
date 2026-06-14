@@ -18,8 +18,8 @@ export async function onRequestPost({ request, env }) {
 
   const corsHeaders = {
     'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Credentials': 'true'
   };
 
@@ -91,6 +91,7 @@ export async function onRequestPost({ request, env }) {
 
     const githubToken = env.GITHUB_TOKEN;
     const githubRepo = env.GITHUB_REPO; // e.g. "Laz-Dim/tviy-trener"
+    const branch = env.GITHUB_BRANCH || 'main';
 
     if (!githubToken || !githubRepo) {
       return new Response(JSON.stringify({ error: 'Налаштування сервера не завершені (відсутній GITHUB_TOKEN або GITHUB_REPO)' }), {
@@ -128,7 +129,7 @@ export async function onRequestPost({ request, env }) {
         body: JSON.stringify({
           message: `feat: upload image for post ${cleanSlug}`,
           content: base64Content,
-          branch: 'main'
+          branch: branch
         })
       });
 
@@ -145,7 +146,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     // 3. Fetch and update blog_posts.json from GitHub
-    const postsUrl = `https://api.github.com/repos/${githubRepo}/contents/blog_posts.json?ref=main`;
+    const postsUrl = `https://api.github.com/repos/${githubRepo}/contents/blog_posts.json?ref=${branch}`;
     const getResponse = await fetch(postsUrl, {
       method: 'GET',
       headers: {
@@ -216,7 +217,7 @@ export async function onRequestPost({ request, env }) {
         message: `feat: publish post ${cleanSlug} via admin panel`,
         content: base64Json,
         sha: sha, // required if file exists
-        branch: 'main'
+        branch: branch
       })
     });
 
@@ -243,6 +244,215 @@ export async function onRequestPost({ request, env }) {
   }
 }
 
+export async function onRequestDelete({ request, env }) {
+  const origin = request.headers.get('Origin');
+  const allowedOrigins = [
+    'https://tviy-trener.com',
+    'https://sndbx-temp.tviy-trener.com',
+    'https://tviy-trener.pages.dev'
+  ];
+  
+  let allowedOrigin = 'https://tviy-trener.com';
+  if (origin && (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+    allowedOrigin = origin;
+  }
+
+  const corsHeaders = {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Methods': 'POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true'
+  };
+
+  try {
+    const { token, slug } = await request.json();
+    
+    // 1. Verify token
+    if (!token) {
+      return new Response(JSON.stringify({ error: 'Необхідна авторизація' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    let telegramId;
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) throw new Error('Invalid token format');
+      const payload = JSON.parse(atob(parts[1]));
+      if (Date.now() / 1000 > payload.exp) {
+        return new Response(JSON.stringify({ error: 'Термін дії сесії закінчився. Увійдіть знову.' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      telegramId = payload.sub;
+    } catch (e) {
+      return new Response(JSON.stringify({ error: 'Некоректний або прострочений токен' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Security check: Verify allowed ID
+    const trainerChatId = env.TELEGRAM_TRAINER_CHAT_ID || '5192950042';
+    const adminChatId = env.TELEGRAM_ADMIN_CHAT_ID || env.ADMIN_CHAT_ID || '143220916';
+    const allowedIds = [trainerChatId, adminChatId].filter(Boolean).map(String);
+
+    if (allowedIds.length > 0 && !allowedIds.includes(String(telegramId))) {
+      return new Response(JSON.stringify({ error: 'Доступ заборонено: невідомий користувач' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    if (!slug) {
+      return new Response(JSON.stringify({ error: 'Слаг статті обов\'язковий для видалення' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const githubToken = env.GITHUB_TOKEN;
+    const githubRepo = env.GITHUB_REPO;
+    const branch = env.GITHUB_BRANCH || 'main';
+
+    if (!githubToken || !githubRepo) {
+      return new Response(JSON.stringify({ error: 'Налаштування сервера не завершені' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 2. Fetch and update blog_posts.json
+    const postsUrl = `https://api.github.com/repos/${githubRepo}/contents/blog_posts.json?ref=${branch}`;
+    const getResponse = await fetch(postsUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'Cloudflare-Pages-Function'
+      }
+    });
+
+    if (!getResponse.ok) {
+      return new Response(JSON.stringify({ error: 'Не вдалося отримати список статей з GitHub' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const fileData = await getResponse.json();
+    const sha = fileData.sha;
+    
+    // Decode content
+    const decodedContent = decodeURIComponent(
+      atob(fileData.content.replace(/\s/g, ''))
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    
+    let posts = [];
+    try {
+      posts = JSON.parse(decodedContent);
+    } catch (e) {
+      return new Response(JSON.stringify({ error: 'Помилка парсингу списку статей' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Filter out the post to delete
+    const postToDelete = posts.find(p => p.slug === slug);
+    if (!postToDelete) {
+      return new Response(JSON.stringify({ error: 'Статтю не знайдено в списку' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const updatedPosts = posts.filter(p => p.slug !== slug);
+
+    // Encode back
+    const jsonString = JSON.stringify(updatedPosts, null, 2);
+    const utf8Bytes = new TextEncoder().encode(jsonString);
+    let binaryJson = '';
+    for (let i = 0; i < utf8Bytes.byteLength; i++) {
+      binaryJson += String.fromCharCode(utf8Bytes[i]);
+    }
+    const base64Json = btoa(binaryJson);
+
+    // Save updated json
+    const saveResponse = await fetch(`https://api.github.com/repos/${githubRepo}/contents/blog_posts.json`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'Cloudflare-Pages-Function',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: `chore: delete post ${slug} via admin panel`,
+        content: base64Json,
+        sha: sha,
+        branch: branch
+      })
+    });
+
+    if (!saveResponse.ok) {
+      return new Response(JSON.stringify({ error: 'Не вдалося зберегти оновлений список статей на GitHub' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 3. Attempt to delete the blog-${slug}.html file from GitHub
+    const htmlFileUrl = `https://api.github.com/repos/${githubRepo}/contents/blog-${slug}.html?ref=${branch}`;
+    const getHtmlResponse = await fetch(htmlFileUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'Cloudflare-Pages-Function'
+      }
+    });
+
+    if (getHtmlResponse.ok) {
+      const htmlFileData = await getHtmlResponse.json();
+      const htmlSha = htmlFileData.sha;
+
+      // Send delete request
+      await fetch(`https://api.github.com/repos/${githubRepo}/contents/blog-${slug}.html`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `token ${githubToken}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'Cloudflare-Pages-Function',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: `chore: delete generated file blog-${slug}.html`,
+          sha: htmlSha,
+          branch: branch
+        })
+      });
+    }
+
+    return new Response(JSON.stringify({ success: true, message: 'Статтю успішно видалено! Сайт оновлюється.' }), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+
+  } catch (err) {
+    console.error('Delete function error:', err);
+    return new Response(JSON.stringify({ error: 'Внутрішня помилка сервера' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
 export async function onRequestOptions({ request }) {
   const origin = request.headers.get('Origin');
   const allowedOrigins = [
@@ -259,8 +469,8 @@ export async function onRequestOptions({ request }) {
   return new Response(null, {
     headers: {
       'Access-Control-Allow-Origin': allowedOrigin,
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Methods': 'POST, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
       'Access-Control-Allow-Credentials': 'true'
     }
   });

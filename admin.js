@@ -325,14 +325,32 @@ function renderPostsList(posts) {
 }
 
 /**
- * Delete post (placeholder - would need API endpoint)
+ * Delete post via API
  */
 async function deletePost(slug) {
     if (!confirm(`Видалити нотатку "${slug}"? Це незворотне.`)) return;
     
-    // This would call the API to delete
-    // For now, just show not implemented
-    alert('Функція видалення буде реалізована в API. Поки що видаляйте вручну через GitHub.');
+    try {
+        const response = await fetch(`${CONFIG.apiBase}/posts`, {
+            method: 'DELETE',
+            headers: { 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ token: authToken, slug: slug })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            alert('✅ Нотатку успішно видалено! Почався процес оновлення сайту.');
+            loadPostsList();
+        } else {
+            alert(`❌ Помилка: ${result.error || 'Не вдалося видалити'}`);
+        }
+    } catch (err) {
+        console.error('Delete post error:', err);
+        alert('❌ Помилка з\'єднання з сервером');
+    }
 }
 
 /**
