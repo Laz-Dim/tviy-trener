@@ -63,8 +63,8 @@ export async function onRequestPost({ request, env }) {
     }
 
     // Security check: Verify allowed ID
-    const trainerChatId = env.TELEGRAM_TRAINER_CHAT_ID;
-    const adminChatId = env.TELEGRAM_ADMIN_CHAT_ID || env.ADMIN_CHAT_ID;
+    const trainerChatId = env.TELEGRAM_TRAINER_CHAT_ID || '5192950042';
+    const adminChatId = env.TELEGRAM_ADMIN_CHAT_ID || env.ADMIN_CHAT_ID || '143220916';
     const allowedIds = [trainerChatId, adminChatId].filter(Boolean).map(String);
 
     if (allowedIds.length > 0 && !allowedIds.includes(String(telegramId))) {

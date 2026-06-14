@@ -34,13 +34,27 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    // Security: Check if telegram_id is allowed
-    const trainerChatId = env.TELEGRAM_TRAINER_CHAT_ID;
-    const adminChatId = env.TELEGRAM_ADMIN_CHAT_ID || env.ADMIN_CHAT_ID;
+    // Resolve username to numeric Telegram ID
+    let resolvedTelegramId = String(telegram_id).trim();
+    const usernameMapping = {
+      'illyapolishchyk': '5192950042',
+      '@illyapolishchyk': '5192950042',
+      'dima_lazarev': '143220916',
+      '@dima_lazarev': '143220916'
+    };
+
+    const normalizedInput = resolvedTelegramId.toLowerCase();
+    if (usernameMapping[normalizedInput]) {
+      resolvedTelegramId = usernameMapping[normalizedInput];
+    }
+
+    // Security: Check if resolved Telegram ID is allowed
+    const trainerChatId = env.TELEGRAM_TRAINER_CHAT_ID || '5192950042';
+    const adminChatId = env.TELEGRAM_ADMIN_CHAT_ID || env.ADMIN_CHAT_ID || '143220916';
     const allowedIds = [trainerChatId, adminChatId].filter(Boolean).map(String);
 
-    if (allowedIds.length > 0 && !allowedIds.includes(String(telegram_id))) {
-      return new Response(JSON.stringify({ error: 'Доступ заборонено: невідомий Telegram ID' }), {
+    if (allowedIds.length > 0 && !allowedIds.includes(resolvedTelegramId)) {
+      return new Response(JSON.stringify({ error: 'Доступ заборонено: невідомий Telegram ID або username' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -51,7 +65,7 @@ export async function onRequestPost({ request, env }) {
     const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes TTL
 
     // Store code in KV with TTL
-    const kvKey = `otp:${telegram_id}`;
+    const kvKey = `otp:${resolvedTelegramId}`;
     if (!env.OTP_KV) {
       return new Response(JSON.stringify({ error: 'База даних OTP_KV не налаштована у Cloudflare' }), {
         status: 500,
@@ -78,7 +92,7 @@ export async function onRequestPost({ request, env }) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        chat_id: telegram_id,
+        chat_id: resolvedTelegramId,
         text: message,
         parse_mode: 'HTML'
       })

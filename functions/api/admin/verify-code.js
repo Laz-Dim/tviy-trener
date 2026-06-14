@@ -34,8 +34,22 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
+    // Resolve username to numeric Telegram ID
+    let resolvedTelegramId = String(telegram_id).trim();
+    const usernameMapping = {
+      'illyapolishchyk': '5192950042',
+      '@illyapolishchyk': '5192950042',
+      'dima_lazarev': '143220916',
+      '@dima_lazarev': '143220916'
+    };
+
+    const normalizedInput = resolvedTelegramId.toLowerCase();
+    if (usernameMapping[normalizedInput]) {
+      resolvedTelegramId = usernameMapping[normalizedInput];
+    }
+
     // Retrieve code from KV
-    const kvKey = `otp:${telegram_id}`;
+    const kvKey = `otp:${resolvedTelegramId}`;
     if (!env.OTP_KV) {
       return new Response(JSON.stringify({ error: 'База даних OTP_KV не налаштована у Cloudflare' }), {
         status: 500,
@@ -88,13 +102,13 @@ export async function onRequestPost({ request, env }) {
     await env.OTP_KV.delete(kvKey);
 
     // Generate session token (simple JWT-like string)
-    const token = generateToken(telegram_id);
+    const token = generateToken(resolvedTelegramId);
     
     // Return success with token
     return new Response(JSON.stringify({
       success: true,
       token,
-      user: { telegram_id }
+      user: { telegram_id: resolvedTelegramId }
     }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

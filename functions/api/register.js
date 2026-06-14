@@ -92,7 +92,7 @@ export async function onRequestPost({ request, env }) {
 
     // Send to Telegram
     const botToken = env.TELEGRAM_BOT_TOKEN;
-    const chatId = env.TELEGRAM_ADMIN_CHAT_ID || env.ADMIN_CHAT_ID; // fallback
+    const chatId = env.TELEGRAM_TRAINER_CHAT_ID || '5192950042'; // Send to trainer Ilya Polishchuk
 
     if (!botToken || !chatId) {
       console.error('Telegram config missing');
