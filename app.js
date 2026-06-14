@@ -73,7 +73,7 @@ async function loadBlogPosts() {
 function renderVideos() {
     if (!videosGrid) return;
     
-    const start = 0;
+    const start = (currentVideoPage - 1) * CONFIG.videosPerPage;
     const end = currentVideoPage * CONFIG.videosPerPage;
     const videosToShow = filteredVideos.slice(start, end);
     
@@ -88,7 +88,7 @@ function renderVideos() {
     
     // Show/hide load more button
     if (loadMoreBtn) {
-        loadMoreBtn.style.display = end < filteredVideos.length ? 'block' : 'none';
+        loadMoreBtn.style.display = (currentVideoPage * CONFIG.videosPerPage) < filteredVideos.length ? 'block' : 'none';
     }
 }
 
