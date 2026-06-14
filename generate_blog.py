@@ -125,6 +125,18 @@ def render_post(template, post):
     """Render a single blog post HTML from template."""
     html = template
     
+    # Render image HTML
+    image_html = ""
+    og_image = post.get('image', 'img_new/logo.jpg')
+    if og_image and og_image != "img_new/logo.jpg" and og_image != "https://tviy-trener.com/img_new/logo.jpg":
+        image_html = f'<figure class="blog-post-image"><img src="{MAIN_DOMAIN}/{og_image}" alt="{post.get("title", "")}" loading="lazy"></figure>'
+        
+    # Render tags HTML
+    tags_html = ""
+    tags = post.get('tags', [])
+    if tags:
+        tags_html = '\n'.join([f'<span class="tag">{tag}</span>' for tag in tags])
+    
     # Basic replacements
     replacements = {
         '{{TITLE}}': post.get('title', ''),
@@ -141,6 +153,8 @@ def render_post(template, post):
         '{{CATEGORY}}': post.get('category', 'general'),
         '{{TAGS}}': ', '.join(post.get('tags', [])),
         '{{READING_TIME}}': estimate_reading_time(post.get('content', '')),
+        '{{ARTICLE_IMAGE_HTML}}': image_html,
+        '{{ARTICLE_TAGS_HTML}}': tags_html,
     }
     
     for placeholder, value in replacements.items():

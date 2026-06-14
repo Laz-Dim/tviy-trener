@@ -65,7 +65,7 @@
 <body>
     <header>
         <nav>
-            <div class="logo">ТВІЙ<span>ТРЕНЕР</span></div>
+            <a href="index.html" class="logo">ТВІЙ<span>ТРЕНЕР</span></a>
             <div class="menu-toggle" id="mobile-menu">
                 <i class="fas fa-bars"></i>
             </div>
@@ -91,11 +91,7 @@
                 </div>
             </header>
             
-            {% if OG_IMAGE and OG_IMAGE != "https://tviy-trener.com/img_new/logo.jpg" %}
-            <figure class="blog-post-image">
-                <img src="https://tviy-trener.com/img_new/swimming.jpg" alt="✅ Чим корисне плавання та вода вцілому?🔥" loading="lazy">
-            </figure>
-            {% endif %}
+            <figure class="blog-post-image"><img src="https://tviy-trener.com/img_new/swimming.jpg" alt="✅ Чим корисне плавання та вода вцілому?🔥" loading="lazy"></figure>
             
             <div class="blog-post-content">
                 <h1>Чим корисне плавання та вода вцілому?</h1><p><strong>Вода — це життя</strong>. І для спортсмена вода стає найкращим другом.</p><h2>Переваги плавання:</h2><h3>1. Повне відновлення</h3>
@@ -123,9 +119,10 @@
             
             <footer class="blog-post-footer">
                 <div class="blog-post-tags">
-                    {% for tag in TAGS.split(', ') %}
-                    <span class="tag">{{tag}}</span>
-                    {% endfor %}
+                    <span class="tag">плавання</span>
+<span class="tag">відновлення</span>
+<span class="tag">кардіо</span>
+<span class="tag">здоров'я</span>
                 </div>
                 <a href="index.html#blog" class="cta-button secondary">← Назад до нотаток</a>
             </footer>
@@ -153,6 +150,10 @@
                     </div>
                     <div class="input-group">
                         <textarea id="message" name="message" placeholder="Твій коментар або питання"></textarea>
+                    </div>
+                    <!-- Honeypot field for anti-spam (invisible to users) -->
+                    <div style="display:none !important;" aria-hidden="true">
+                        <input type="text" name="website" id="website" tabindex="-1" autocomplete="off">
                     </div>
                     <button type="submit" class="cta-button">Відправити запит</button>
                 </form>
@@ -203,6 +204,20 @@
                 const phoneValue = phoneInput.value;
                 const phoneRegex = /^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/;
 
+                // 1. Client-side Rate Limit check via LocalStorage
+                const lastSentTime = localStorage.getItem('form_sent_time');
+                const sentCount = parseInt(localStorage.getItem('form_sent_count') || '0');
+                const blockDuration = 15 * 60 * 1000; // 15 minutes
+
+                if (lastSentTime && (Date.now() - parseInt(lastSentTime) < blockDuration)) {
+                    if (sentCount >= 3) {
+                        const minutesLeft = Math.ceil((blockDuration - (Date.now() - parseInt(lastSentTime))) / 60000);
+                        status.style.color = 'red';
+                        status.innerText = `Помилка: Ви перевищили ліміт відправок. Спробуйте знову через ${minutesLeft} хв. або зателефонуйте.`;
+                        return;
+                    }
+                }
+
                 if (!phoneRegex.test(phoneValue)) {
                     status.style.color = 'red';
                     status.innerText = 'Помилка: Будь ласка, введіть повний номер (+38 (0XX) XXX-XX-XX)';
@@ -217,11 +232,13 @@
                     name: document.getElementById('name').value,
                     phone: phoneValue,
                     goal: document.getElementById('goal').options[document.getElementById('goal').selectedIndex].text,
-                    message: document.getElementById('message').value
+                    message: document.getElementById('message').value,
+                    website: document.getElementById('website').value // Honeypot
                 };
 
                 try {
-                    const response = await fetch('https://tviy-trener.com/api/register', {
+                    const apiUrl = '/api/register';
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(formData)
@@ -231,6 +248,12 @@
                         status.style.color = 'green';
                         status.innerText = 'Заявку прийнято! Ілля зв\'яжеться з вами найближчим часом.';
                         form.reset();
+
+                        // Update LocalStorage Rate Limit
+                        const now = Date.now();
+                        const currentSentCount = lastSentTime && (now - parseInt(lastSentTime) < blockDuration) ? sentCount + 1 : 1;
+                        localStorage.setItem('form_sent_count', currentSentCount.toString());
+                        localStorage.setItem('form_sent_time', now.toString());
                     } else {
                         status.style.color = 'red';
                         status.innerText = result.error || 'Помилка відправки. Спробуйте пізніше або зателефонуйте.';

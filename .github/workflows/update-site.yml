@@ -1,6 +1,11 @@
 name: Update Site Data
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'blog_posts.json'
   schedule:
     - cron: '0 6 * * *'  # щоденно о 06:00 UTC
   workflow_dispatch:      # ручний запуск
@@ -12,6 +17,7 @@ jobs:
   update-videos:
     name: Fetch YouTube Videos
     runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
