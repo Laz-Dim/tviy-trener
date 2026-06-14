@@ -34,6 +34,7 @@ export async function onRequestPost({ request, env }) {
     const content = formData.get('content');
     const date = formData.get('date');
     const imageFile = formData.get('image'); // File object
+    const existingImage = formData.get('existingImage');
 
     // 1. Verify token
     if (!token) {
@@ -101,7 +102,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     // 2. Upload image to GitHub if present
-    let imageRelativePath = 'img_new/logo.jpg'; // default fallback
+    let imageRelativePath = existingImage || 'img_new/logo.jpg'; // default fallback
 
     if (imageFile && imageFile.size > 0) {
       const arrayBuffer = await imageFile.arrayBuffer();

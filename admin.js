@@ -13,6 +13,8 @@ const CONFIG = {
 // State
 let authToken = null;
 let currentUser = null;
+let allPosts = [];
+let editingPost = null;
 
 // DOM Elements
 const loginSection = document.getElementById('loginSection');
@@ -27,6 +29,11 @@ const otpCodeInput = document.getElementById('otpCode');
 const postForm = document.getElementById('postForm');
 const postTitle = document.getElementById('postTitle');
 const postSlug = document.getElementById('postSlug');
+const postCategory = document.getElementById('postCategory');
+const postTags = document.getElementById('postTags');
+const postDescription = document.getElementById('postDescription');
+const postContent = document.getElementById('postContent');
+const postDate = document.getElementById('postDate');
 const postImage = document.getElementById('postImage');
 const imagePreview = document.getElementById('imagePreview');
 const publishBtn = document.getElementById('publishBtn');
@@ -35,6 +42,12 @@ const adminTabs = document.querySelectorAll('.admin-tab');
 const adminPanels = document.querySelectorAll('.admin-panel');
 const postsListBody = document.getElementById('postsListBody');
 const refreshPostsBtn = document.getElementById('refreshPostsBtn');
+
+// New DOM Elements for edit feature
+const formTitle = document.getElementById('formTitle');
+const existingImageInput = document.getElementById('existingImage');
+const saveDraftBtn = document.getElementById('saveDraftBtn');
+const cancelEditBtn = document.getElementById('cancelEditBtn');
 
 /**
  * Initialize admin panel
@@ -99,6 +112,9 @@ function setupEventListeners() {
     
     // Refresh posts list
     refreshPostsBtn?.addEventListener('click', loadPostsList);
+    
+    // Cancel edit button
+    cancelEditBtn?.addEventListener('click', cancelEdit);
     
     // Logout on tab close
     window.addEventListener('beforeunload', () => {
@@ -232,15 +248,18 @@ async function savePost(publish = false) {
     if (postImage.files[0]) {
         formData.append('image', postImage.files[0]);
     }
+    if (existingImageInput && existingImageInput.value) {
+        formData.append('existingImage', existingImageInput.value);
+    }
     
     // Add auth token
     formData.append('token', authToken);
     
-    const btn = publish ? publishBtn : postForm.querySelector('button[type="submit"]');
+    const btn = publish ? publishBtn : saveDraftBtn;
     const originalText = btn.innerHTML;
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (publish ? 'Публікація...' : 'Збереження...');
-    showStatus(postStatus, publish ? 'Публікую нотатку...' : 'Зберігаю чернетку...', 'info');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (publish ? (editingPost ? 'Оновлення...' : 'Публікація...') : 'Збереження...');
+    showStatus(postStatus, publish ? (editingPost ? 'Оновлюю статтю...' : 'Публікую нотатку...') : 'Зберігаю чернетку...', 'info');
     
     try {
         const response = await fetch(`${CONFIG.apiBase}/posts`, {
@@ -251,17 +270,26 @@ async function savePost(publish = false) {
         const result = await response.json();
         
         if (result.success) {
-            showStatus(postStatus, `✅ ${publish ? 'Опубліковано!' : 'Чернетку збережено!'}`, 'success');
-            if (publish) {
-                // Reset form after successful publish
-                postForm.reset();
-                postSlug.dataset.manual = 'false';
-                imagePreview.classList.remove('visible');
-                document.getElementById('postDate').value = new Date().toISOString().split('T')[0];
-                
-                // Refresh posts list if visible
-                if (document.getElementById('listPanel').classList.contains('active')) {
+            showStatus(postStatus, `✅ ${publish ? (editingPost ? 'Зміни опубліковано!' : 'Опубліковано!') : (editingPost ? 'Чернетку оновлено!' : 'Чернетку збережено!')}`, 'success');
+            
+            if (editingPost) {
+                // Return to list after short delay
+                setTimeout(() => {
+                    cancelEdit();
                     loadPostsList();
+                }, 1000);
+            } else {
+                if (publish) {
+                    // Reset form after successful publish
+                    postForm.reset();
+                    postSlug.dataset.manual = 'false';
+                    imagePreview.classList.remove('visible');
+                    document.getElementById('postDate').value = new Date().toISOString().split('T')[0];
+                    
+                    // Refresh posts list if visible
+                    if (document.getElementById('listPanel').classList.contains('active')) {
+                        loadPostsList();
+                    }
                 }
             }
         } else {
@@ -290,6 +318,7 @@ async function loadPostsList() {
             posts = await response.json();
         }
         
+        allPosts = posts;
         renderPostsList(posts);
     } catch (err) {
         console.error('Load posts error:', err);
@@ -316,6 +345,9 @@ function renderPostsList(posts) {
                 <a href="blog-${escapeHtml(post.slug)}.html" target="_blank" class="cta-button secondary btn" style="padding: 8px 12px; font-size: 12px;">
                     <i class="fas fa-eye"></i> Перегляд
                 </a>
+                <button type="button" class="cta-button btn edit" onclick="editPost('${escapeHtml(post.slug)}')" style="padding: 8px 12px; font-size: 12px;">
+                    <i class="fas fa-edit"></i> Редагувати
+                </button>
                 <button type="button" class="cta-button btn danger" onclick="deletePost('${escapeHtml(post.slug)}')" style="padding: 8px 12px; font-size: 12px;">
                     <i class="fas fa-trash"></i> Видалити
                 </button>
@@ -351,6 +383,78 @@ async function deletePost(slug) {
         console.error('Delete post error:', err);
         alert('❌ Помилка з\'єднання з сервером');
     }
+}
+
+/**
+ * Edit post - fill form with post data and switch to form tab
+ */
+function editPost(slug) {
+    const post = allPosts.find(p => p.slug === slug);
+    if (!post) return;
+    
+    editingPost = post;
+    
+    // Fill form fields
+    postTitle.value = post.title || '';
+    postSlug.value = post.slug || '';
+    postSlug.readOnly = true;
+    postSlug.style.opacity = '0.7';
+    postSlug.style.cursor = 'not-allowed';
+    
+    postCategory.value = post.category || 'general';
+    postTags.value = post.tags ? post.tags.join(', ') : '';
+    postDescription.value = post.description || '';
+    postContent.value = post.content || '';
+    postDate.value = post.date || '';
+    
+    // Handle image preview
+    if (post.image) {
+        imagePreview.src = post.image;
+        imagePreview.classList.add('visible');
+        if (existingImageInput) existingImageInput.value = post.image;
+    } else {
+        imagePreview.classList.remove('visible');
+        if (existingImageInput) existingImageInput.value = '';
+    }
+    
+    // Update UI titles/buttons
+    if (formTitle) formTitle.textContent = 'Редагування нотатки';
+    if (saveDraftBtn) saveDraftBtn.innerHTML = '<i class="fas fa-save"></i> Оновити чернетку';
+    if (publishBtn) publishBtn.innerHTML = '<i class="fas fa-rocket"></i> Опублікувати зміни';
+    if (cancelEditBtn) cancelEditBtn.style.display = 'inline-block';
+    
+    // Switch tab to form
+    switchTab('create');
+    
+    // Clear form status
+    showStatus(postStatus, '', '');
+}
+
+/**
+ * Cancel edit mode and reset form
+ */
+function cancelEdit() {
+    editingPost = null;
+    postForm.reset();
+    
+    postSlug.readOnly = false;
+    postSlug.style.opacity = '1';
+    postSlug.style.cursor = 'text';
+    postSlug.dataset.manual = 'false';
+    
+    imagePreview.classList.remove('visible');
+    if (existingImageInput) existingImageInput.value = '';
+    
+    if (formTitle) formTitle.textContent = 'Нова нотатка';
+    if (saveDraftBtn) saveDraftBtn.innerHTML = '<i class="fas fa-save"></i> Зберегти як чернетку';
+    if (publishBtn) publishBtn.innerHTML = '<i class="fas fa-rocket"></i> Опублікувати';
+    if (cancelEditBtn) cancelEditBtn.style.display = 'none';
+    
+    // Set date back to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('postDate').value = today;
+    
+    switchTab('list');
 }
 
 /**

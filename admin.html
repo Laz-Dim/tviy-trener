@@ -14,7 +14,7 @@
     <style>
         /* Admin-specific styles */
         .admin-container {
-            max-width: 800px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 40px 20px;
         }
@@ -215,7 +215,7 @@
         }
         .post-row {
             display: grid;
-            grid-template-columns: 60px 1fr 120px 100px 100px;
+            grid-template-columns: 60px 1fr 120px 100px 300px;
             gap: 15px;
             align-items: center;
             padding: 15px 30px;
@@ -267,6 +267,15 @@
         }
         .post-actions .btn.danger:hover {
             background: #e74c3c;
+        }
+        .post-actions .btn.edit {
+            background: #2980b9;
+            border-color: #2980b9;
+            color: white;
+        }
+        .post-actions .btn.edit:hover {
+            background: #3498db;
+            border-color: #3498db;
         }
         
         /* Responsive */
@@ -350,7 +359,8 @@
                 <!-- Create Post Panel -->
                 <div id="createPanel" class="admin-panel active">
                     <form id="postForm" class="post-form" novalidate>
-                        <h2 style="margin-bottom: 30px; text-align: center;">Нова нотатка</h2>
+                        <input type="hidden" id="existingImage" name="existingImage">
+                        <h2 id="formTitle" style="margin-bottom: 30px; text-align: center;">Нова нотатка</h2>
                         
                         <div class="input-group">
                             <label for="postTitle">Заголовок *</label>
@@ -415,11 +425,14 @@
                         </div>
                         
                         <div class="btn-group">
-                            <button type="submit" class="cta-button">
+                            <button type="submit" class="cta-button" id="saveDraftBtn">
                                 <i class="fas fa-save"></i> Зберегти як чернетку
                             </button>
                             <button type="button" class="cta-button secondary" id="publishBtn">
                                 <i class="fas fa-rocket"></i> Опублікувати
+                            </button>
+                            <button type="button" class="cta-button secondary danger" id="cancelEditBtn" style="display: none; background: #c0392b; border-color: #c0392b; color: white;">
+                                <i class="fas fa-times"></i> Скасувати
                             </button>
                         </div>
                         
