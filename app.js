@@ -30,6 +30,16 @@ async function init() {
     await loadVideos();
     await loadBlogPosts();
     setupEventListeners();
+    
+    // Scroll to section if hash exists in URL (fixes scroll position after async layout shift)
+    if (window.location.hash) {
+        const targetElement = document.querySelector(window.location.hash);
+        if (targetElement) {
+            setTimeout(() => {
+                targetElement.scrollIntoView({ behavior: 'smooth' });
+            }, 150);
+        }
+    }
 }
 
 /**
