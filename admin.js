@@ -342,13 +342,13 @@ function renderPostsList(posts) {
             <span class="post-category">${escapeHtml(post.category)}</span>
             <span class="post-date">${post.date ? new Date(post.date).toLocaleDateString('uk-UA') : ''}</span>
             <div class="post-actions">
-                <a href="blog-${escapeHtml(post.slug)}.html" target="_blank" class="cta-button secondary btn" style="padding: 8px 12px; font-size: 12px;">
+                <a href="blog-${escapeHtml(post.slug)}.html" target="_blank" class="cta-button secondary btn" style="padding: 8px 10px; font-size: 12px;">
                     <i class="fas fa-eye"></i> Перегляд
                 </a>
-                <button type="button" class="cta-button btn edit" onclick="editPost('${escapeHtml(post.slug)}')" style="padding: 8px 12px; font-size: 12px;">
+                <button type="button" class="cta-button btn edit" onclick="editPost('${escapeHtml(post.slug)}')" style="padding: 8px 10px; font-size: 12px;">
                     <i class="fas fa-edit"></i> Редагувати
                 </button>
-                <button type="button" class="cta-button btn danger" onclick="deletePost('${escapeHtml(post.slug)}')" style="padding: 8px 12px; font-size: 12px;">
+                <button type="button" class="cta-button btn danger" onclick="deletePost('${escapeHtml(post.slug)}')" style="padding: 8px 10px; font-size: 12px;">
                     <i class="fas fa-trash"></i> Видалити
                 </button>
             </div>
