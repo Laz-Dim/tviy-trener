@@ -113,11 +113,8 @@ def main():
 
     youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
 
-    # Resolve channel
-    channel_id = get_channel_id(youtube, CHANNEL_HANDLE)
-    if not channel_id:
-        print(f"ERROR: Could not resolve channel {CHANNEL_HANDLE}", file=sys.stderr)
-        sys.exit(1)
+    # Use fixed Channel ID for @tviy_trener to save API quota and ensure 100% reliability
+    channel_id = "UCCQuvsZ0rd5MM08M14lAvpg"
     print(f"Channel ID: {channel_id}")
 
     # Get uploads playlist
