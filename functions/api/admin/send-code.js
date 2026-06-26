@@ -9,11 +9,18 @@ export async function onRequestPost({ request, env }) {
   const allowedOrigins = [
     'https://tviy-trener.com',
     'https://sndbx-temp.tviy-trener.com',
-    'https://tviy-trener.pages.dev'
+    'https://tviy-trener.pages.dev',
+    'https://tviy-trener-v2.pages.dev'
   ];
   
   let allowedOrigin = 'https://tviy-trener.com';
-  if (origin && (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+  if (origin && (
+    allowedOrigins.includes(origin) ||
+    origin.endsWith('.tviy-trener.pages.dev') ||
+    origin.endsWith('.tviy-trener-v2.pages.dev') ||
+    origin.startsWith('http://localhost:') ||
+    origin.startsWith('http://127.0.0.1:')
+  )) {
     allowedOrigin = origin;
   }
 
@@ -128,11 +135,18 @@ export async function onRequestOptions({ request }) {
   const allowedOrigins = [
     'https://tviy-trener.com',
     'https://sndbx-temp.tviy-trener.com',
-    'https://tviy-trener.pages.dev'
+    'https://tviy-trener.pages.dev',
+    'https://tviy-trener-v2.pages.dev'
   ];
   
   let allowedOrigin = 'https://tviy-trener.com';
-  if (origin && (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:'))) {
+  if (origin && (
+    allowedOrigins.includes(origin) ||
+    origin.endsWith('.tviy-trener.pages.dev') ||
+    origin.endsWith('.tviy-trener-v2.pages.dev') ||
+    origin.startsWith('http://localhost:') ||
+    origin.startsWith('http://127.0.0.1:')
+  )) {
     allowedOrigin = origin;
   }
 
