@@ -11,6 +11,7 @@ from datetime import datetime
 
 BASE_DIR = Path(__file__).parent
 TEMPLATE_FILE = BASE_DIR / "blog-template.html"
+TEMPLATE_FILE_V2 = BASE_DIR / "blog-template-v2.html"
 POSTS_FILE = BASE_DIR / "blog_posts.json"
 SITEMAP_FILE = BASE_DIR / "sitemap.xml"
 ROBOTS_FILE = BASE_DIR / "robots.txt"
@@ -148,7 +149,7 @@ def save_posts(posts):
     with open(POSTS_FILE, 'w', encoding='utf-8') as f:
         json.dump(posts, f, ensure_ascii=False, indent=2)
 
-def render_post(template, post):
+def render_post(template, post, version=1):
     """Render a single blog post HTML from template."""
     html = template
     
@@ -156,20 +157,28 @@ def render_post(template, post):
     image_html = ""
     og_image = post.get('image', 'img_new/logo.jpg')
     if og_image and og_image != "img_new/logo.jpg" and og_image != "https://tviy-trener.com/img_new/logo.jpg":
-        image_html = f'<figure class="blog-post-image"><img src="{MAIN_DOMAIN}/{og_image}" alt="{post.get("title", "")}" loading="lazy"></figure>'
+        if version == 2:
+            image_html = f'<figure class="mb-10 overflow-hidden border border-white/10 notch-corner"><img src="{MAIN_DOMAIN}/{og_image}" alt="{post.get("title", "")}" class="w-full h-auto object-cover img-noir" loading="lazy"></figure>'
+        else:
+            image_html = f'<figure class="blog-post-image"><img src="{MAIN_DOMAIN}/{og_image}" alt="{post.get("title", "")}" loading="lazy"></figure>'
         
     # Render tags HTML
     tags_html = ""
     tags = post.get('tags', [])
     if tags:
-        tags_html = '\n'.join([f'<span class="tag">{tag}</span>' for tag in tags])
+        if version == 2:
+            tags_html = '\n'.join([f'<span class="font-mono text-[10px] uppercase tracking-wider text-[var(--accent)] border border-[var(--accent)]/30 px-3 py-1">{tag}</span>' for tag in tags])
+        else:
+            tags_html = '\n'.join([f'<span class="tag">{tag}</span>' for tag in tags])
+    
+    slug_suffix = "-v2" if version == 2 else ""
     
     # Basic replacements
     replacements = {
         '{{TITLE}}': post.get('title', ''),
         '{{DESCRIPTION}}': post.get('description', ''),
-        '{{CANONICAL_URL}}': f"{MAIN_DOMAIN}/blog-{post['slug']}.html",
-        '{{OG_URL}}': f"{MAIN_DOMAIN}/blog-{post['slug']}.html",
+        '{{CANONICAL_URL}}': f"{MAIN_DOMAIN}/blog-{post['slug']}{slug_suffix}.html",
+        '{{OG_URL}}': f"{MAIN_DOMAIN}/blog-{post['slug']}{slug_suffix}.html",
         '{{OG_TITLE}}': post.get('title', ''),
         '{{OG_DESCRIPTION}}': post.get('description', ''),
         '{{OG_IMAGE}}': f"{MAIN_DOMAIN}/{post.get('image', 'img_new/logo.jpg')}",
@@ -199,11 +208,18 @@ def generate_sitemap(posts):
     """Generate sitemap.xml."""
     urls = [
         {"loc": MAIN_DOMAIN, "changefreq": "weekly", "priority": "1.0"},
+        {"loc": f"{MAIN_DOMAIN}/index_v2.html", "changefreq": "weekly", "priority": "0.9"},
     ]
     
     for post in posts:
         urls.append({
             "loc": f"{MAIN_DOMAIN}/blog-{post['slug']}.html",
+            "lastmod": post.get('date', datetime.now().strftime('%Y-%m-%d')),
+            "changefreq": "monthly",
+            "priority": "0.8"
+        })
+        urls.append({
+            "loc": f"{MAIN_DOMAIN}/blog-{post['slug']}-v2.html",
             "lastmod": post.get('date', datetime.now().strftime('%Y-%m-%d')),
             "changefreq": "monthly",
             "priority": "0.8"
@@ -222,16 +238,24 @@ def generate_sitemap(posts):
     xml_lines.append('</urlset>')
     
     return '\n'.join(xml_lines)
-
+    
 def main():
     print("Generating blog pages...")
     
-    # Load template
+    # Load templates
     if not TEMPLATE_FILE.exists():
         print(f"ERROR: Template not found: {TEMPLATE_FILE}")
         return
-    
+        
     template = load_template()
+    
+    template_v2 = ""
+    if TEMPLATE_FILE_V2.exists():
+        with open(TEMPLATE_FILE_V2, 'r', encoding='utf-8') as f:
+            template_v2 = f.read()
+    else:
+        print(f"WARNING: V2 Template not found: {TEMPLATE_FILE_V2}")
+        
     posts = load_posts()
     
     if not posts:
@@ -242,25 +266,35 @@ def main():
             f.write(sitemap)
         print(f"Generated {SITEMAP_FILE}")
         return
-    
-    generated = 0
+        
+    generated_v1 = 0
+    generated_v2 = 0
     for post in posts:
         # Ensure slug exists
         if 'slug' not in post:
             post['slug'] = slugify(post['title'])
-        
+            
         # Ensure date exists
         if 'date' not in post:
             post['date'] = datetime.now().strftime('%Y-%m-%d')
-        
-        # Render and save
-        html = render_post(template, post)
+            
+        # Render and save V1
+        html = render_post(template, post, version=1)
         output_file = BASE_DIR / f"blog-{post['slug']}.html"
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(html)
-        print(f"  Generated: {output_file.name}")
-        generated += 1
-    
+        print(f"  Generated V1: {output_file.name}")
+        generated_v1 += 1
+        
+        # Render and save V2
+        if template_v2:
+            html_v2 = render_post(template_v2, post, version=2)
+            output_file_v2 = BASE_DIR / f"blog-{post['slug']}-v2.html"
+            with open(output_file_v2, 'w', encoding='utf-8') as f:
+                f.write(html_v2)
+            print(f"  Generated V2: {output_file_v2.name}")
+            generated_v2 += 1
+            
     # Save updated posts (with slugs/dates added)
     save_posts(posts)
     
@@ -270,7 +304,7 @@ def main():
         f.write(sitemap)
     print(f"Generated: {SITEMAP_FILE}")
     
-    print(f"\nDone! Generated {generated} blog pages.")
+    print(f"\nDone! Generated {generated_v1} V1 and {generated_v2} V2 blog pages.")
 
 if __name__ == "__main__":
     main()

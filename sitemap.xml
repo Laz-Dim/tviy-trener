@@ -6,13 +6,30 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://tviy-trener.com/index_v2.html</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://tviy-trener.com/blog-chim-korisne-plavannya-ta-voda-vcilomu.html</loc>
     <lastmod>2025-03-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://tviy-trener.com/blog-chim-korisne-plavannya-ta-voda-vcilomu-v2.html</loc>
+    <lastmod>2025-03-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://tviy-trener.com/blog-klassika-chi-kruzhka-tehnika-bokovogo-udaru.html</loc>
+    <lastmod>2025-03-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://tviy-trener.com/blog-klassika-chi-kruzhka-tehnika-bokovogo-udaru-v2.html</loc>
     <lastmod>2025-03-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
