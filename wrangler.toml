@@ -1,28 +1,18 @@
-name = "tviy-trener"
+name = "tviy-trener-v2"
 compatibility_date = "2026-06-01"
 pages_build_output_dir = "."
 
-
 # Cloudflare Pages configuration
 
-
-# Custom domains (configure in Cloudflare dashboard after deployment)
-# [[routes]]
-# pattern = "tviy-trener.com/*"
-# zone_name = "tviy-trener.com"
-
-# Environment variables (set in Cloudflare dashboard)
-# [env.production.vars]
-# NODE_ENV = "production"
-
-# KV namespace for OTP storage (create via: wrangler kv:namespace create "OTP_KV")
- [[kv_namespaces]]
- binding = "OTP_KV"
- id = "112a6b6f44ca43fe8863ed308172f231"
-# preview_id = "your-preview-kv-namespace-id"
-
+# KV namespace for OTP storage
+[[kv_namespaces]]
+binding = "OTP_KV"
+id = "e1d4da3226224e518457e48735449f3b"
+preview_id = "daaf8c67c7b044d59264577a916ca916"
 
 # Workers functions are auto-discovered from functions/ directory
 # Functions will be available at:
-# /api/admin/send-code -> functions/admin/send-code.js
-# /api/admin/verify-code -> functions/admin/verify-code.js
+# /api/admin/send-code -> functions/api/admin/send-code.js
+# /api/admin/verify-code -> functions/api/admin/verify-code.js
+# /api/admin/posts -> functions/api/admin/posts.js
+# /api/register -> functions/api/register.js
