@@ -1,9 +1,10 @@
-name: Update Site Data
+name: Update Site Data & Deploy
 
 on:
   push:
     branches:
       - main
+      - v2
     paths:
       - 'blog_posts.json'
   schedule:
@@ -13,16 +14,21 @@ on:
 permissions:
   contents: write  # потрібно для пушу комітів
 
+concurrency:
+  group: site-update-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
-  update-videos:
-    name: Fetch YouTube Videos
+  update-and-deploy:
+    name: Update Data, Generate Blog & Deploy to Cloudflare Pages
     runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_PAT }}  # PAT для пушу
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+          token: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -32,44 +38,56 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Fetch videos from YouTube
+      - name: Fetch videos from YouTube (on schedule or manual trigger)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         env:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: python get_videos.py
 
-      - name: Commit and push if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add videos_data.json
-          git diff --staged --quiet || git commit -m "chore: update videos data"
-          git push
-
-  generate-blog:
-    name: Generate Blog Pages
-    runs-on: ubuntu-latest
-    # Запускається тільки якщо змінився blog_posts.json (наприклад, після пушу з адмінки)
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_PAT }}
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
       - name: Generate blog pages + sitemap
         run: python generate_blog.py
 
-      - name: Commit and push generated files
+      - name: Commit and push updated files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add blog-*.html sitemap.xml blog_posts.json
-          git diff --staged --quiet || git commit -m "chore: generate blog pages + sitemap"
-          git push
+          git add videos_data.json blog-*.html sitemap.xml blog_posts.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: auto-update blog pages, sitemap & videos [skip ci]"
+            git pull --rebase origin ${{ github.ref_name }}
+            git push origin ${{ github.ref_name }}
+          fi
+
+      - name: Deploy current branch to Cloudflare Pages
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ "${{ github.ref_name }}" = "v2" ]; then
+            npx --yes wrangler pages deploy . --project-name tviy-trener-v2 --branch v2
+          else
+            npx --yes wrangler pages deploy . --project-name tviy-trener --branch main
+          fi
+
+      - name: Sync videos_data.json and blog_posts.json to v2 on schedule
+        if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && github.ref_name == 'main'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          cp videos_data.json /tmp/videos_data.json
+          cp blog_posts.json /tmp/blog_posts.json
+          git checkout v2
+          git pull --rebase origin v2
+          cp /tmp/videos_data.json videos_data.json
+          cp /tmp/blog_posts.json blog_posts.json
+          python generate_blog.py
+          git add videos_data.json blog-*.html sitemap.xml blog_posts.json
+          if ! git diff --staged --quiet; then
+            git commit -m "chore: sync videos & blog data to v2 [skip ci]"
+            git push origin v2
+          fi
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ]; then
+            npx --yes wrangler pages deploy . --project-name tviy-trener-v2 --branch v2
+          fi

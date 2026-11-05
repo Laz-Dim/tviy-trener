@@ -1,34 +1,166 @@
 /**
- * Cloudflare Pages Function: Create and save blog posts via GitHub API
+ * Cloudflare Pages Function: List, create, update, and delete blog posts via GitHub API
+ * GET /api/admin/posts
  * POST /api/admin/posts
+ * DELETE /api/admin/posts
  */
 
-export async function onRequestPost({ request, env }) {
+function getCorsHeaders(request) {
   const origin = request.headers.get('Origin');
   const allowedOrigins = [
     'https://tviy-trener.com',
+    'https://www.tviy-trener.com',
     'https://sndbx-temp.tviy-trener.com',
     'https://tviy-trener.pages.dev',
-    'https://tviy-trener-v2.pages.dev'
+    'https://tviy-trener-v2.pages.dev',
+    'https://tviy-trener-1hq.pages.dev',
+    'https://tviy-trener-v2-5pv.pages.dev'
   ];
-  
+
   let allowedOrigin = 'https://tviy-trener.com';
   if (origin && (
     allowedOrigins.includes(origin) ||
     origin.endsWith('.tviy-trener.pages.dev') ||
     origin.endsWith('.tviy-trener-v2.pages.dev') ||
+    origin.endsWith('.tviy-trener-1hq.pages.dev') ||
+    origin.endsWith('.tviy-trener-v2-5pv.pages.dev') ||
     origin.startsWith('http://localhost:') ||
     origin.startsWith('http://127.0.0.1:')
   )) {
     allowedOrigin = origin;
   }
 
-  const corsHeaders = {
+  return {
     'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Methods': 'POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     'Access-Control-Allow-Credentials': 'true'
   };
+}
+
+function base64UrlEncode(str) {
+  return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlDecode(str) {
+  let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (base64.length % 4) {
+    base64 += '=';
+  }
+  return atob(base64);
+}
+
+async function verifySignedToken(token, env) {
+  if (!token || typeof token !== 'string') {
+    return { valid: false, error: 'Необхідна авторизація' };
+  }
+
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    return { valid: false, error: 'Некоректний формат токена' };
+  }
+
+  const [headerB64, payloadB64, signatureB64] = parts;
+  const secret = (env.JWT_SECRET || env.TELEGRAM_BOT_TOKEN || '') + ':' + (env.GITHUB_TOKEN || 'tviy-trener');
+
+  try {
+    const data = `${headerB64}.${payloadB64}`;
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+
+    const sigBuffer = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+    const sigBytes = new Uint8Array(sigBuffer);
+    let binary = '';
+    for (let i = 0; i < sigBytes.byteLength; i++) {
+      binary += String.fromCharCode(sigBytes[i]);
+    }
+    const expectedSig = base64UrlEncode(binary);
+
+    if (signatureB64 !== expectedSig) {
+      return { valid: false, error: 'Недійсний підпис сесії. Увійдіть знову.' };
+    }
+
+    const payload = JSON.parse(base64UrlDecode(payloadB64));
+    if (!payload.exp || Date.now() / 1000 > payload.exp) {
+      return { valid: false, error: 'Термін дії сесії закінчився. Увійдіть знову.' };
+    }
+
+    const trainerChatId = env.TELEGRAM_TRAINER_CHAT_ID || '5192950042';
+    const adminChatId = env.TELEGRAM_ADMIN_CHAT_ID || env.ADMIN_CHAT_ID || '143220916';
+    const allowedIds = [trainerChatId, adminChatId].filter(Boolean).map(String);
+
+    if (allowedIds.length > 0 && !allowedIds.includes(String(payload.sub))) {
+      return { valid: false, error: 'Доступ заборонено: невідомий користувач', status: 403 };
+    }
+
+    return { valid: true, telegramId: String(payload.sub) };
+  } catch (err) {
+    return { valid: false, error: 'Некоректний або прострочений токен' };
+  }
+}
+
+export async function onRequestGet({ request, env }) {
+  const corsHeaders = getCorsHeaders(request);
+
+  try {
+    const githubToken = env.GITHUB_TOKEN;
+    const githubRepo = env.GITHUB_REPO;
+    const branch = env.GITHUB_BRANCH || 'main';
+
+    if (!githubToken || !githubRepo) {
+      return new Response(JSON.stringify({ error: 'Налаштування сервера не завершені' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    const postsUrl = `https://api.github.com/repos/${githubRepo}/contents/blog_posts.json?ref=${branch}`;
+    const getResponse = await fetch(postsUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'User-Agent': 'Cloudflare-Pages-Function'
+      }
+    });
+
+    if (!getResponse.ok) {
+      return new Response(JSON.stringify([]), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
+      });
+    }
+
+    const fileData = await getResponse.json();
+    const decodedContent = decodeURIComponent(
+      atob(fileData.content.replace(/\s/g, ''))
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+
+    const posts = JSON.parse(decodedContent);
+    return new Response(JSON.stringify(posts), {
+      status: 200,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
+    });
+  } catch (err) {
+    console.error('GET posts error:', err);
+    return new Response(JSON.stringify({ error: 'Помилка отримання списку нотаток' }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+}
+
+export async function onRequestPost({ request, env }) {
+  const corsHeaders = getCorsHeaders(request);
 
   try {
     const formData = await request.formData();
@@ -40,44 +172,14 @@ export async function onRequestPost({ request, env }) {
     const description = formData.get('description');
     const content = formData.get('content');
     const date = formData.get('date');
-    const imageFile = formData.get('image'); // File object
+    const imageFile = formData.get('image');
     const existingImage = formData.get('existingImage');
 
-    // 1. Verify token
-    if (!token) {
-      return new Response(JSON.stringify({ error: 'Необхідна авторизація' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    let telegramId;
-    try {
-      const parts = token.split('.');
-      if (parts.length !== 3) throw new Error('Invalid token format');
-      const payload = JSON.parse(atob(parts[1]));
-      if (Date.now() / 1000 > payload.exp) {
-        return new Response(JSON.stringify({ error: 'Термін дії сесії закінчився. Увійдіть знову.' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-      }
-      telegramId = payload.sub;
-    } catch (e) {
-      return new Response(JSON.stringify({ error: 'Некоректний або прострочений токен' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Security check: Verify allowed ID
-    const trainerChatId = env.TELEGRAM_TRAINER_CHAT_ID || '5192950042';
-    const adminChatId = env.TELEGRAM_ADMIN_CHAT_ID || env.ADMIN_CHAT_ID || '143220916';
-    const allowedIds = [trainerChatId, adminChatId].filter(Boolean).map(String);
-
-    if (allowedIds.length > 0 && !allowedIds.includes(String(telegramId))) {
-      return new Response(JSON.stringify({ error: 'Доступ заборонено: невідомий користувач' }), {
-        status: 403,
+    // 1. Verify HMAC-signed token
+    const auth = await verifySignedToken(token, env);
+    if (!auth.valid) {
+      return new Response(JSON.stringify({ error: auth.error }), {
+        status: auth.status || 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -98,7 +200,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     const githubToken = env.GITHUB_TOKEN;
-    const githubRepo = env.GITHUB_REPO; // e.g. "Laz-Dim/tviy-trener"
+    const githubRepo = env.GITHUB_REPO;
     const branch = env.GITHUB_BRANCH || 'main';
 
     if (!githubToken || !githubRepo) {
@@ -109,7 +211,7 @@ export async function onRequestPost({ request, env }) {
     }
 
     // 2. Upload image to GitHub if present
-    let imageRelativePath = existingImage || 'img_new/logo.jpg'; // default fallback
+    let imageRelativePath = existingImage || 'img_new/logo.jpg';
 
     if (imageFile && imageFile.size > 0) {
       const arrayBuffer = await imageFile.arrayBuffer();
@@ -119,12 +221,11 @@ export async function onRequestPost({ request, env }) {
         binary += String.fromCharCode(bytes[i]);
       }
       const base64Content = btoa(binary);
-      
+
       const fileExt = imageFile.name ? imageFile.name.substring(imageFile.name.lastIndexOf('.')) : '.jpg';
       const uniqueName = `blog-${cleanSlug}-${Date.now()}${fileExt}`;
       const imagePath = `img_new/${uniqueName}`;
 
-      // Upload file via GitHub API
       const uploadUrl = `https://api.github.com/repos/${githubRepo}/contents/${imagePath}`;
       const uploadResponse = await fetch(uploadUrl, {
         method: 'PUT',
@@ -170,15 +271,14 @@ export async function onRequestPost({ request, env }) {
     if (getResponse.ok) {
       const fileData = await getResponse.json();
       sha = fileData.sha;
-      
-      // Decode content (UTF-8 safe)
+
       const decodedContent = decodeURIComponent(
         atob(fileData.content.replace(/\s/g, ''))
           .split('')
           .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
           .join('')
       );
-      
+
       try {
         posts = JSON.parse(decodedContent);
       } catch (e) {
@@ -187,7 +287,7 @@ export async function onRequestPost({ request, env }) {
       }
     }
 
-    // 4. Prepend new post
+    // 4. Prepend new/updated post
     const newPost = {
       slug: cleanSlug,
       title: title.trim(),
@@ -199,7 +299,6 @@ export async function onRequestPost({ request, env }) {
       image: imageRelativePath
     };
 
-    // Remove if post with same slug already exists (update)
     posts = posts.filter(p => p.slug !== cleanSlug);
     posts.unshift(newPost);
 
@@ -224,7 +323,7 @@ export async function onRequestPost({ request, env }) {
       body: JSON.stringify({
         message: `feat: publish post ${cleanSlug} via admin panel`,
         content: base64Json,
-        sha: sha, // required if file exists
+        sha: sha,
         branch: branch
       })
     });
@@ -253,70 +352,16 @@ export async function onRequestPost({ request, env }) {
 }
 
 export async function onRequestDelete({ request, env }) {
-  const origin = request.headers.get('Origin');
-  const allowedOrigins = [
-    'https://tviy-trener.com',
-    'https://sndbx-temp.tviy-trener.com',
-    'https://tviy-trener.pages.dev',
-    'https://tviy-trener-v2.pages.dev'
-  ];
-  
-  let allowedOrigin = 'https://tviy-trener.com';
-  if (origin && (
-    allowedOrigins.includes(origin) ||
-    origin.endsWith('.tviy-trener.pages.dev') ||
-    origin.endsWith('.tviy-trener-v2.pages.dev') ||
-    origin.startsWith('http://localhost:') ||
-    origin.startsWith('http://127.0.0.1:')
-  )) {
-    allowedOrigin = origin;
-  }
-
-  const corsHeaders = {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Methods': 'POST, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Access-Control-Allow-Credentials': 'true'
-  };
+  const corsHeaders = getCorsHeaders(request);
 
   try {
     const { token, slug } = await request.json();
-    
-    // 1. Verify token
-    if (!token) {
-      return new Response(JSON.stringify({ error: 'Необхідна авторизація' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
 
-    let telegramId;
-    try {
-      const parts = token.split('.');
-      if (parts.length !== 3) throw new Error('Invalid token format');
-      const payload = JSON.parse(atob(parts[1]));
-      if (Date.now() / 1000 > payload.exp) {
-        return new Response(JSON.stringify({ error: 'Термін дії сесії закінчився. Увійдіть знову.' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-      }
-      telegramId = payload.sub;
-    } catch (e) {
-      return new Response(JSON.stringify({ error: 'Некоректний або прострочений токен' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Security check: Verify allowed ID
-    const trainerChatId = env.TELEGRAM_TRAINER_CHAT_ID || '5192950042';
-    const adminChatId = env.TELEGRAM_ADMIN_CHAT_ID || env.ADMIN_CHAT_ID || '143220916';
-    const allowedIds = [trainerChatId, adminChatId].filter(Boolean).map(String);
-
-    if (allowedIds.length > 0 && !allowedIds.includes(String(telegramId))) {
-      return new Response(JSON.stringify({ error: 'Доступ заборонено: невідомий користувач' }), {
-        status: 403,
+    // 1. Verify HMAC-signed token
+    const auth = await verifySignedToken(token, env);
+    if (!auth.valid) {
+      return new Response(JSON.stringify({ error: auth.error }), {
+        status: auth.status || 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
@@ -359,15 +404,14 @@ export async function onRequestDelete({ request, env }) {
 
     const fileData = await getResponse.json();
     const sha = fileData.sha;
-    
-    // Decode content
+
     const decodedContent = decodeURIComponent(
       atob(fileData.content.replace(/\s/g, ''))
         .split('')
         .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
         .join('')
     );
-    
+
     let posts = [];
     try {
       posts = JSON.parse(decodedContent);
@@ -378,7 +422,6 @@ export async function onRequestDelete({ request, env }) {
       });
     }
 
-    // Filter out the post to delete
     const postToDelete = posts.find(p => p.slug === slug);
     if (!postToDelete) {
       return new Response(JSON.stringify({ error: 'Статтю не знайдено в списку' }), {
@@ -389,7 +432,6 @@ export async function onRequestDelete({ request, env }) {
 
     const updatedPosts = posts.filter(p => p.slug !== slug);
 
-    // Encode back
     const jsonString = JSON.stringify(updatedPosts, null, 2);
     const utf8Bytes = new TextEncoder().encode(jsonString);
     let binaryJson = '';
@@ -398,7 +440,6 @@ export async function onRequestDelete({ request, env }) {
     }
     const base64Json = btoa(binaryJson);
 
-    // Save updated json
     const saveResponse = await fetch(`https://api.github.com/repos/${githubRepo}/contents/blog_posts.json`, {
       method: 'PUT',
       headers: {
@@ -422,7 +463,7 @@ export async function onRequestDelete({ request, env }) {
       });
     }
 
-    // 3. Attempt to delete the blog-${slug}.html file from GitHub
+    // 3. Delete the blog-${slug}.html file from GitHub if it exists
     const htmlFileUrl = `https://api.github.com/repos/${githubRepo}/contents/blog-${slug}.html?ref=${branch}`;
     const getHtmlResponse = await fetch(htmlFileUrl, {
       method: 'GET',
@@ -437,7 +478,6 @@ export async function onRequestDelete({ request, env }) {
       const htmlFileData = await getHtmlResponse.json();
       const htmlSha = htmlFileData.sha;
 
-      // Send delete request
       await fetch(`https://api.github.com/repos/${githubRepo}/contents/blog-${slug}.html`, {
         method: 'DELETE',
         headers: {
@@ -469,31 +509,7 @@ export async function onRequestDelete({ request, env }) {
 }
 
 export async function onRequestOptions({ request }) {
-  const origin = request.headers.get('Origin');
-  const allowedOrigins = [
-    'https://tviy-trener.com',
-    'https://sndbx-temp.tviy-trener.com',
-    'https://tviy-trener.pages.dev',
-    'https://tviy-trener-v2.pages.dev'
-  ];
-  
-  let allowedOrigin = 'https://tviy-trener.com';
-  if (origin && (
-    allowedOrigins.includes(origin) ||
-    origin.endsWith('.tviy-trener.pages.dev') ||
-    origin.endsWith('.tviy-trener-v2.pages.dev') ||
-    origin.startsWith('http://localhost:') ||
-    origin.startsWith('http://127.0.0.1:')
-  )) {
-    allowedOrigin = origin;
-  }
-
   return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': allowedOrigin,
-      'Access-Control-Allow-Methods': 'POST, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-      'Access-Control-Allow-Credentials': 'true'
-    }
+    headers: getCorsHeaders(request)
   });
 }

@@ -112,12 +112,15 @@
             <div class="form-wrapper">
                 <form id="trainerForm">
                     <div class="input-group">
-                        <input type="text" id="name" name="name" placeholder="Твоє ім'я *" required>
+                        <label for="name" class="sr-only">Ім'я</label>
+                        <input type="text" id="name" name="name" placeholder="Твоє ім'я *" autocomplete="name" required>
                     </div>
                     <div class="input-group">
-                        <input type="tel" id="phone" name="phone" placeholder="+38 (0XX) XXX-XX-XX *" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required>
+                        <label for="phone" class="sr-only">Телефон</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+38 (0XX) XXX-XX-XX *" autocomplete="tel" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required>
                     </div>
                     <div class="input-group">
+                        <label for="goal" class="sr-only">Ціль тренувань</label>
                         <select id="goal" name="goal">
                             <option value="weight_loss">Схуднення</option>
                             <option value="muscle_gain">Набір маси</option>
@@ -126,6 +129,7 @@
                         </select>
                     </div>
                     <div class="input-group">
+                        <label for="message" class="sr-only">Коментар</label>
                         <textarea id="message" name="message" placeholder="Твій коментар або питання"></textarea>
                     </div>
                     <!-- Honeypot field for anti-spam (invisible to users) -->

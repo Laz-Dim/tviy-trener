@@ -4,36 +4,45 @@
  * Body: { telegram_id: "5192950042" }
  */
 
-export async function onRequestPost({ request, env }) {
+function getCorsHeaders(request) {
   const origin = request.headers.get('Origin');
   const allowedOrigins = [
     'https://tviy-trener.com',
+    'https://www.tviy-trener.com',
     'https://sndbx-temp.tviy-trener.com',
     'https://tviy-trener.pages.dev',
-    'https://tviy-trener-v2.pages.dev'
+    'https://tviy-trener-v2.pages.dev',
+    'https://tviy-trener-1hq.pages.dev',
+    'https://tviy-trener-v2-5pv.pages.dev'
   ];
-  
+
   let allowedOrigin = 'https://tviy-trener.com';
   if (origin && (
     allowedOrigins.includes(origin) ||
     origin.endsWith('.tviy-trener.pages.dev') ||
     origin.endsWith('.tviy-trener-v2.pages.dev') ||
+    origin.endsWith('.tviy-trener-1hq.pages.dev') ||
+    origin.endsWith('.tviy-trener-v2-5pv.pages.dev') ||
     origin.startsWith('http://localhost:') ||
     origin.startsWith('http://127.0.0.1:')
   )) {
     allowedOrigin = origin;
   }
 
-  const corsHeaders = {
+  return {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Credentials': 'true'
   };
+}
+
+export async function onRequestPost({ request, env }) {
+  const corsHeaders = getCorsHeaders(request);
 
   try {
     const { telegram_id } = await request.json();
-    
+
     if (!telegram_id) {
       return new Response(JSON.stringify({ error: 'telegram_id є обов\'язковим' }), {
         status: 400,
@@ -67,12 +76,6 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
-    // Generate 6-digit OTP code
-    const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes TTL
-
-    // Store code in KV with TTL
-    const kvKey = `otp:${resolvedTelegramId}`;
     if (!env.OTP_KV) {
       return new Response(JSON.stringify({ error: 'База даних OTP_KV не налаштована у Cloudflare' }), {
         status: 500,
@@ -80,8 +83,28 @@ export async function onRequestPost({ request, env }) {
       });
     }
 
+    // Rate limit OTP sending (max 5 per 10 minutes per IP)
+    const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
+    const otpRateKey = `otp_rate:${ip}`;
+    const rateStored = await env.OTP_KV.get(otpRateKey, { type: 'json' });
+    if (rateStored && rateStored.count >= 5) {
+      return new Response(JSON.stringify({ error: 'Забагато запитів коду. Зачекайте 10 хвилин.' }), {
+        status: 429,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+    await env.OTP_KV.put(otpRateKey, JSON.stringify({ count: (rateStored ? rateStored.count : 0) + 1 }), {
+      expirationTtl: 600
+    });
+
+    // Generate 6-digit OTP code
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + 5 * 60 * 1000; // 5 minutes TTL
+
+    // Store code in KV with TTL
+    const kvKey = `otp:${resolvedTelegramId}`;
     await env.OTP_KV.put(kvKey, JSON.stringify({ code, expiresAt, attempts: 0 }), {
-      expirationTtl: 300 // 5 minutes in seconds
+      expirationTtl: 300
     });
 
     // Send via Telegram Bot API
@@ -106,7 +129,7 @@ export async function onRequestPost({ request, env }) {
     });
 
     const tgResult = await tgResponse.json();
-    
+
     if (!tgResult.ok) {
       console.error('Telegram API error:', tgResult);
       return new Response(JSON.stringify({ error: 'Не вдалося надіслати код через Telegram. Переконайтеся, що ви почали діалог з ботом.' }), {
@@ -129,33 +152,8 @@ export async function onRequestPost({ request, env }) {
   }
 }
 
-// Handle OPTIONS for CORS
 export async function onRequestOptions({ request }) {
-  const origin = request.headers.get('Origin');
-  const allowedOrigins = [
-    'https://tviy-trener.com',
-    'https://sndbx-temp.tviy-trener.com',
-    'https://tviy-trener.pages.dev',
-    'https://tviy-trener-v2.pages.dev'
-  ];
-  
-  let allowedOrigin = 'https://tviy-trener.com';
-  if (origin && (
-    allowedOrigins.includes(origin) ||
-    origin.endsWith('.tviy-trener.pages.dev') ||
-    origin.endsWith('.tviy-trener-v2.pages.dev') ||
-    origin.startsWith('http://localhost:') ||
-    origin.startsWith('http://127.0.0.1:')
-  )) {
-    allowedOrigin = origin;
-  }
-
   return new Response(null, {
-    headers: {
-      'Access-Control-Allow-Origin': allowedOrigin,
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Allow-Credentials': 'true'
-    }
+    headers: getCorsHeaders(request)
   });
 }

@@ -250,11 +250,11 @@
                     <form id="trainerForm" novalidate>
                         <div class="input-group">
                             <label for="name" class="sr-only">Ім'я</label>
-                            <input type="text" id="name" name="name" placeholder="Твоє ім'я *" required aria-required="true">
+                            <input type="text" id="name" name="name" placeholder="Твоє ім'я *" autocomplete="name" required aria-required="true">
                         </div>
                         <div class="input-group">
                             <label for="phone" class="sr-only">Телефон</label>
-                            <input type="tel" id="phone" name="phone" placeholder="+38 (0XX) XXX-XX-XX *" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required aria-required="true">
+                            <input type="tel" id="phone" name="phone" placeholder="+38 (0XX) XXX-XX-XX *" autocomplete="tel" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required aria-required="true">
                         </div>
                         <div class="input-group">
                             <label for="goal" class="sr-only">Ціль тренувань</label>
@@ -433,26 +433,6 @@
                 if (e.target === lightbox) {
                     lightbox.style.display = 'none';
                 }
-            });
-        }
-
-        // Mobile menu
-        const mobileMenu = document.getElementById('mobile-menu');
-        const navList = document.querySelector('.nav-list');
-        if (mobileMenu && navList) {
-            mobileMenu.addEventListener('click', () => {
-                navList.classList.toggle('active');
-                const icon = mobileMenu.querySelector('i');
-                icon.classList.toggle('fa-bars');
-                icon.classList.toggle('fa-times');
-            });
-            document.querySelectorAll('.nav-list a').forEach(link => {
-                link.addEventListener('click', () => {
-                    navList.classList.remove('active');
-                    const icon = mobileMenu.querySelector('i');
-                    icon.classList.add('fa-bars');
-                    icon.classList.remove('fa-times');
-                });
             });
         }
     </script>

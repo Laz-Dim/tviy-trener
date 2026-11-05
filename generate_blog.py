@@ -41,6 +41,18 @@ def slugify(text):
     slug = re.sub(r'-+', '-', ''.join(result))
     return slug.strip('-')
 
+def escape_html_attr(text):
+    """Escape text for safe inclusion inside HTML attributes and JSON strings."""
+    if not text:
+        return ""
+    return (
+        str(text)
+        .replace('&', '&amp;')
+        .replace('"', '&quot;')
+        .replace('<', '&lt;')
+        .replace('>', '&gt;')
+    )
+
 def parse_markdown(text):
     """Robust Markdown to HTML conversion."""
     if not text:
@@ -82,13 +94,16 @@ def parse_markdown(text):
     for line in lines:
         stripped = line.strip()
         
-        # 1. Headers
-        header_match = re.match(r'^(#{1,6})\s+(.+)$', stripped)
+        # 1. Headers (allow optional space after #)
+        header_match = re.match(r'^(#{1,6})\s*(.+)$', stripped)
         if header_match:
             close_list_if_open()
             close_paragraph_if_open()
             level = len(header_match.group(1))
-            header_text = header_match.group(2)
+            # Avoid duplicate H1 inside article body (promote H1 to H2)
+            if level == 1:
+                level = 2
+            header_text = header_match.group(2).strip()
             output.append(f'<h{level}>{header_text}</h{level}>')
             continue
             
@@ -152,33 +167,39 @@ def render_post(template, post):
     """Render a single blog post HTML from template."""
     html = template
     
-    # Render image HTML
+    title_safe = escape_html_attr(post.get('title', ''))
+    desc_safe = escape_html_attr(post.get('description', ''))
+    
+    # Render image HTML (use relative path for page img so it works on all domains/previews)
     image_html = ""
     og_image = post.get('image', 'img_new/logo.jpg')
     if og_image and og_image != "img_new/logo.jpg" and og_image != "https://tviy-trener.com/img_new/logo.jpg":
-        image_html = f'<figure class="blog-post-image"><img src="{MAIN_DOMAIN}/{og_image}" alt="{post.get("title", "")}" loading="lazy"></figure>'
+        rel_img = og_image.replace(f"{MAIN_DOMAIN}/", "").lstrip("/")
+        image_html = f'<figure class="blog-post-image"><img src="{rel_img}" alt="{title_safe}" loading="lazy"></figure>'
         
     # Render tags HTML
     tags_html = ""
     tags = post.get('tags', [])
     if tags:
-        tags_html = '\n'.join([f'<span class="tag">{tag}</span>' for tag in tags])
+        tags_html = '\n'.join([f'<span class="tag">{escape_html_attr(tag)}</span>' for tag in tags])
+    
+    og_image_url = og_image if og_image.startswith('http') else f"{MAIN_DOMAIN}/{og_image.lstrip('/')}"
     
     # Basic replacements
     replacements = {
-        '{{TITLE}}': post.get('title', ''),
-        '{{DESCRIPTION}}': post.get('description', ''),
+        '{{TITLE}}': title_safe,
+        '{{DESCRIPTION}}': desc_safe,
         '{{CANONICAL_URL}}': f"{MAIN_DOMAIN}/blog-{post['slug']}.html",
         '{{OG_URL}}': f"{MAIN_DOMAIN}/blog-{post['slug']}.html",
-        '{{OG_TITLE}}': post.get('title', ''),
-        '{{OG_DESCRIPTION}}': post.get('description', ''),
-        '{{OG_IMAGE}}': f"{MAIN_DOMAIN}/{post.get('image', 'img_new/logo.jpg')}",
+        '{{OG_TITLE}}': title_safe,
+        '{{OG_DESCRIPTION}}': desc_safe,
+        '{{OG_IMAGE}}': og_image_url,
         '{{PUBLISHED_DATE}}': post.get('date', datetime.now().strftime('%Y-%m-%d')),
         '{{MODIFIED_DATE}}': post.get('date', datetime.now().strftime('%Y-%m-%d')),
         '{{AUTHOR_NAME}}': 'Ілля Поліщук',
         '{{ARTICLE_CONTENT}}': parse_markdown(post.get('content', '')),
-        '{{CATEGORY}}': post.get('category', 'general'),
-        '{{TAGS}}': ', '.join(post.get('tags', [])),
+        '{{CATEGORY}}': escape_html_attr(post.get('category', 'general')),
+        '{{TAGS}}': escape_html_attr(', '.join(post.get('tags', []))),
         '{{READING_TIME}}': estimate_reading_time(post.get('content', '')),
         '{{ARTICLE_IMAGE_HTML}}': image_html,
         '{{ARTICLE_TAGS_HTML}}': tags_html,

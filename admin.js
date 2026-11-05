@@ -7,7 +7,6 @@
 const CONFIG = {
     apiBase: '/api/admin',  // Cloudflare Workers endpoints
     postsFile: 'blog_posts.json',
-    githubApiBase: 'https://api.github.com/repos/OWNER/REPO',  // Will be configured via env
 };
 
 // State
@@ -50,20 +49,50 @@ const saveDraftBtn = document.getElementById('saveDraftBtn');
 const cancelEditBtn = document.getElementById('cancelEditBtn');
 
 /**
+ * Check if token is still valid (client-side exp check)
+ */
+function isTokenValid(token) {
+    if (!token || typeof token !== 'string') return false;
+    const parts = token.split('.');
+    if (parts.length !== 3) return false;
+    try {
+        const b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(atob(b64));
+        return Boolean(payload.exp && Date.now() / 1000 < payload.exp);
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * Handle expired or invalid session
+ */
+function handleUnauthorized(msg = 'Сесія закінчилася. Будь ласка, увійдіть знову.') {
+    authToken = null;
+    sessionStorage.removeItem('admin_token');
+    dashboardSection.classList.remove('visible');
+    loginSection.style.display = 'block';
+    showStatus(loginStatus, `⚠️ ${msg}`, 'error');
+}
+
+/**
  * Initialize admin panel
  */
 function init() {
     // Check for existing auth in sessionStorage
     const savedToken = sessionStorage.getItem('admin_token');
-    if (savedToken) {
+    if (savedToken && isTokenValid(savedToken)) {
         authToken = savedToken;
         showDashboard();
+    } else if (savedToken) {
+        sessionStorage.removeItem('admin_token');
     }
     
     setupEventListeners();
     // Set today's date as default
     const today = new Date().toISOString().split('T')[0];
-    document.getElementById('postDate').value = today;
+    const dateInput = document.getElementById('postDate');
+    if (dateInput) dateInput.value = today;
 }
 
 /**
@@ -83,7 +112,7 @@ function setupEventListeners() {
     
     // Auto-generate slug from title
     postTitle?.addEventListener('input', () => {
-        if (!postSlug.dataset.manual) {
+        if (!postSlug.dataset.manual || postSlug.dataset.manual === 'false') {
             postSlug.value = slugify(postTitle.value);
         }
     });
@@ -115,11 +144,6 @@ function setupEventListeners() {
     
     // Cancel edit button
     cancelEditBtn?.addEventListener('click', cancelEdit);
-    
-    // Logout on tab close
-    window.addEventListener('beforeunload', () => {
-        // Keep sessionStorage for session persistence
-    });
 }
 
 /**
@@ -269,6 +293,11 @@ async function savePost(publish = false) {
         
         const result = await response.json();
         
+        if (response.status === 401 || response.status === 403) {
+            handleUnauthorized(result.error);
+            return;
+        }
+        
         if (result.success) {
             showStatus(postStatus, `✅ ${publish ? (editingPost ? 'Зміни опубліковано!' : 'Опубліковано!') : (editingPost ? 'Чернетку оновлено!' : 'Чернетку збережено!')}`, 'success');
             
@@ -305,17 +334,33 @@ async function savePost(publish = false) {
 }
 
 /**
- * Load posts list for admin
+ * Load posts list for admin (via uncached API endpoint first, fallback to static JSON)
  */
 async function loadPostsList() {
     postsListBody.innerHTML = '<p style="padding: 40px; text-align: center; color: var(--text-gray);">Завантаження...</p>';
     
     try {
-        // Try to load from blog_posts.json first (for local testing)
-        const response = await fetch(CONFIG.postsFile);
         let posts = [];
-        if (response.ok) {
-            posts = await response.json();
+        let loaded = false;
+
+        try {
+            const apiRes = await fetch(`${CONFIG.apiBase}/posts?t=${Date.now()}`, { cache: 'no-store' });
+            if (apiRes.ok) {
+                const data = await apiRes.json();
+                if (Array.isArray(data)) {
+                    posts = data;
+                    loaded = true;
+                }
+            }
+        } catch {
+            // Fallback to static file below
+        }
+
+        if (!loaded) {
+            const response = await fetch(`${CONFIG.postsFile}?t=${Date.now()}`, { cache: 'no-store' });
+            if (response.ok) {
+                posts = await response.json();
+            }
         }
         
         allPosts = posts;
@@ -372,6 +417,11 @@ async function deletePost(slug) {
         });
         
         const result = await response.json();
+        
+        if (response.status === 401 || response.status === 403) {
+            handleUnauthorized(result.error);
+            return;
+        }
         
         if (result.success) {
             alert('✅ Нотатку успішно видалено! Почався процес оновлення сайту.');
