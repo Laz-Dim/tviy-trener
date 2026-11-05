@@ -326,16 +326,32 @@
             
             <nav class="hidden lg:flex items-center gap-10">
                 <a href="index.html#about" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Філософія</a>
+                <a href="index.html#trainer" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Про тренера</a>
                 <a href="index.html#services" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Напрямки</a>
                 <a href="index.html#videos" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Відео</a>
                 <a href="index.html#blog" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Нотатки</a>
                 <a href="index.html#contacts" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Контакти</a>
             </nav>
             
-            <div>
-                <a href="index.html#registration" class="font-heading text-xs tracking-[0.2em] uppercase text-black bg-[var(--silver)] px-5 py-2.5 hover:bg-white transition-colors">
+            <div class="flex items-center gap-4">
+                <a href="#registration" class="font-heading text-xs tracking-[0.2em] uppercase text-black bg-[var(--silver)] px-5 py-2.5 hover:bg-white transition-colors font-semibold">
                     Записатись
                 </a>
+                <button id="mobileMenuBtn" class="lg:hidden text-[var(--fg)] text-xl p-1" aria-label="Меню">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu overlay -->
+        <div id="mobileMenu" class="hidden fixed inset-x-0 top-[65px] bg-black/95 border-b border-white/5 py-8 px-6 z-40 lg:hidden transition-all duration-300">
+            <div class="flex flex-col gap-6 font-heading text-lg tracking-[0.15em] uppercase text-center">
+                <a href="index.html#about" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Філософія</a>
+                <a href="index.html#trainer" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Про тренера</a>
+                <a href="index.html#services" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Напрямки</a>
+                <a href="index.html#videos" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Відео</a>
+                <a href="index.html#blog" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Нотатки</a>
+                <a href="index.html#contacts" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Контакти</a>
             </div>
         </div>
     </header>
@@ -345,8 +361,6 @@
         <div class="mb-10">
             <a href="index.html#blog" class="font-mono text-xs text-[var(--muted)] hover:text-[var(--accent)] transition-colors tracking-widest uppercase">
                 <i class="fas fa-arrow-left mr-2"></i> Назад до нотаток
-            </a>
-        </div>        </div>       <i class="fas fa-arrow-left mr-2"></i> Назад до нотаток
             </a>
         </div>
 
@@ -369,18 +383,60 @@
             </header>
             
             <!-- Article Image -->
-            <figure class="mb-10 overflow-hidden border border-white/10 notch-corner"><img src="https://tviy-trener.com/img_new/Classic_punch.jpg" alt="Класика чи кружка? Техніка бокового удару 🤜" class="w-full h-auto object-cover img-noir" loading="lazy"></figure>
+            <figure class="mb-10 overflow-hidden border border-white/10 notch-corner"><img src="img_new/Classic_punch.jpg" alt="Класика чи кружка? Техніка бокового удару 🤜" class="w-full h-auto object-cover img-noir" loading="lazy"></figure>
             
             <!-- Article Content -->
             <div class="blog-post-content my-12">
-                <h1>Класика чи кружка? Техніка бокового удару</h1>
-<p>Сьогодні розберемо важливе питання, яке часто виникає у боксерів: який удар кращий — "кружкою" чи "класикою"? Обидва варіанти мають свої сильні сторони, недоліки та особливості застосування. Давайте детально розберемо, щоб ви розуміли, коли і який удар використовувати.</p>
-<p>##Удар "класикою" Кулак у момент удару повертається горизонтально, долонею вниз. <strong>Плюси</strong>: Максимальна сила — добре включається плече і корпус. Дальша дистанція — зручний для середньої й дальньої дистанції. Універсальність — стандартний варіант, легко комбінувати. Прохідність через блок — пряма траєкторія пробиває захист. Технічна стабільність — легко контролювати. <strong>Мінуси</strong>: Ризик для зап’ястя при неправильному влучанні. Помітний замах — супернику легше зчитати. Менш компактний на ближній дистанції. Відкриває лікоть — можливі контратаки аперкотом.</p>
-<p>##Удар "кружкою" Це коли кулак у момент контакту стоїть вертикально, ніби ви тримаєте чашку або кружку. <strong>Плюси:</strong> Природність руху — рука та зап’ястя знаходяться в більш зручному положенні. Ближня дистанція — зручно працювати у клінчі чи в тісному бою. Компактність — удар менш помітний для суперника. Гнучкість у серіях — легко переходити в аперкоти. Лікоть закритий — менше шансів пропустити удар знизу. <strong>Мінуси:</strong> Менша сила — не завжди проб’є блок. Коротша дистанція — складніше дістати суперника здалеку. Не класичний варіант — рідше використовується у школі боксу. Втягування в клінч — може залишити на ближній дистанції.</p>
-<p>##🔹 Поєднання ударів Ці удари не суперники, а доповнення один одного. Кружкою зручно працювати у ближньому бою. Класикою — бити сильно і здалеку. Наприклад: лівий боковий кружкою, а правий класикою. Така зміна траєкторій робить серію непередбачуваною. 🔹 Візуалізація траєкторій (простий варіант) Кружка: кулак рухається ніби по невеликій дузі або по радіусу кола, і в кінці залишається вертикальним. Це дозволяє обходити блок і залишатись компактним. Класика: рух більш прямий, кулак розвертається горизонтально. Завдяки цьому сила удару більша, а плече отримує менше навантаження. 🎯 Висновок В ідеалі боксер повинен володіти обома ударами. Кружка — для ближньої дистанції й прихованих атак. Класика — для сили та роботи на середній і дальній дистанції. Сильний боєць той, хто вміє комбінувати ці удари і підлаштовувати їх під ситуацію.</p>
+                <p>Сьогодні розберемо важливе питання, яке часто виникає у боксерів: який удар кращий — "кружкою" чи "класикою"?</p>
+<p>Обидва варіанти мають свої сильні сторони, недоліки та особливості застосування. Давайте детально розберемо, щоб ви розуміли, коли і який удар використовувати.</p>
+<h2>Удар "класикою"</h2>
+<p>Кулак у момент удару повертається горизонтально, долонею вниз.</p>
+<p><strong>Плюси:</strong></p>
+<ul>
+<li>Максимальна сила — добре включається плече і корпус.</li>
+<li>Дальша дистанція — зручний для середньої й дальньої дистанції.</li>
+<li>Універсальність — стандартний варіант, легко комбінувати.</li>
+<li>Прохідність через блок — пряма траєкторія пробиває захист.</li>
+<li>Технічна стабільність — легко контролювати.</li>
+</ul>
+<p><strong>Мінуси:</strong></p>
+<ul>
+<li>Ризик для зап’ястя при неправильному влучанні.</li>
+<li>Помітний замах — супернику легше зчитати.</li>
+<li>Менш компактний на ближній дистанції.</li>
+<li>Відкриває лікоть — можливі контратаки аперкотом.</li>
+</ul>
+<h2>Удар "кружкою"</h2>
+<p>Це коли кулак у момент контакту стоїть вертикально, ніби ви тримаєте чашку або кружку.</p>
+<p><strong>Плюси:</strong></p>
+<ul>
+<li>Природність руху — рука та зап’ястя знаходяться в більш зручному положенні.</li>
+<li>Ближня дистанція — зручно працювати у клінчі чи в тісному бою.</li>
+<li>Компактність — удар менш помітний для суперника.</li>
+<li>Гнучкість у серіях — легко переходити в аперкоти.</li>
+<li>Лікоть закритий — менше шансів пропустити удар знизу.</li>
+</ul>
+<p><strong>Мінуси:</strong></p>
+<ul>
+<li>Менша сила — не завжди проб’є блок.</li>
+<li>Коротша дистанція — складніше дістати суперника здалеку.</li>
+<li>Не класичний варіант — рідше використовується у школі боксу.</li>
+<li>Втягування в клінч — може залишити на ближній дистанції.</li>
+</ul>
+<h2>🔹 Поєднання ударів</h2>
+<p>Ці удари не суперники, а доповнення один одного. Кружкою зручно працювати у ближньому бою. Класикою — бити сильно і здалеку.</p>
+<p>Наприклад: лівий боковий кружкою, а правий класикою. Така зміна траєкторій робить серію непередбачуваною.</p>
+<h3>Візуалізація траєкторій</h3>
+<ul>
+<li><strong>Кружка:</strong> кулак рухається ніби по невеликій дузі або по радіусу кола, і в кінці залишається вертикальним. Це дозволяє обходити блок і залишатись компактним.</li>
+<li><strong>Класика:</strong> рух більш прямий, кулак розвертається горизонтально. Завдяки цьому сила удару більша, а плече отримує менше навантаження.</li>
+</ul>
 <h2>Що обрати?</h2>
-<p>✅ <strong>Для початківців — класика</strong>. Навчіться бити прямим, контролюйте дистанцію. ✅ <strong>Для досвідчених — поєднання</strong>. Класика для робочої дистанції, кружка для близькості.</p>
-<p><strong>Головне правило</strong>: техніка повинна зберігати ваші суглоби. Не варто жертвувати здоров'ям заради "кращого" вигляду удару.</p>
+<ul>
+<li>✅ <strong>Для початківців — класика</strong>. Навчіться бити прямим, контролюйте дистанцію.</li>
+<li>✅ <strong>Для досвідчених — поєднання</strong>. Класика для робочої дистанції, кружка для ближнього бою.</li>
+</ul>
+<p><strong>Головне правило</strong>: техніка повинна зберігати ваші суглоби. Сильний боєць той, хто вміє комбінувати ці удари і підлаштовувати їх під ситуацію.</p>
             </div>
             
             <!-- Article Footer -->
@@ -425,11 +481,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
                             <label for="name" class="sr-only">Твоє ім'я *</label>
-                            <input type="text" id="name" name="name" class="form-input" placeholder="ТВОЄ ІМ'Я *" required>
+                            <input type="text" id="name" name="name" class="form-input" placeholder="ТВОЄ ІМ'Я *" autocomplete="name" required>
                         </div>
                         <div>
                             <label for="phone" class="sr-only">Телефон *</label>
-                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+38 (0XX) XXX-XX-XX *" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required>
+                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+38 (0XX) XXX-XX-XX *" autocomplete="tel" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required>
                         </div>
                     </div>
 
@@ -468,6 +524,30 @@
     </footer>
 
     <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                const icon = mobileMenuBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-bars');
+                    icon.classList.toggle('fa-times');
+                }
+            });
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (icon) {
+                        icon.classList.add('fa-bars');
+                        icon.classList.remove('fa-times');
+                    }
+                });
+            });
+        }
+
         // Goal selector logic
         const goalPills = document.querySelectorAll('.goal-pill');
         let selectedGoalText = "Схуднення";

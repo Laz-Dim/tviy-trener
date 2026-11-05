@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Ілля Поліщук — професійний персональний тренер у Львові з 20-річним досвідом. Бруталістичний преміум-дизайн версії 2. Спеціалізується на схудненні, наборі маси, боксі та ЗФП.">
-    <meta property="og:title" content="Ілля Поліщук — Твій Тренер у Львові (Версія 2)">
+    <meta name="description" content="Ілля Поліщук — професійний персональний тренер у Львові з 20-річним досвідом. Спеціалізується на схудненні, наборі маси, боксі та ЗФП.">
+    <meta property="og:title" content="Ілля Поліщук — Твій Тренер у Львові">
     <meta property="og:description" content="Твоє тіло — це твоя відповідальність. Почни тренування сьогодні з професіоналом.">
     <meta property="og:image" content="https://tviy-trener.com/img_new/illya_01.jpg">
     <meta property="og:type" content="website">
-    <title>Ілля Поліщук — Твій Тренер у Львові (Версія 2)</title>
+    <title>Ілля Поліщук — Твій Тренер у Львові</title>
     <link rel="canonical" href="https://tviy-trener.com/">
     <link rel="icon" type="image/jpeg" href="img_new/logo.jpg">
     
@@ -46,6 +46,35 @@
             "addressLocality": "Львів",
             "addressCountry": "UA"
         }
+    }
+    </script>
+
+    <!-- Schema.org SportsActivityLocation -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SportsActivityLocation",
+        "name": "Твій Тренер — Особистий кабінет",
+        "url": "https://tviy-trener.com/",
+        "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Левандівка (кінцева)",
+            "addressLocality": "Львів",
+            "addressCountry": "UA"
+        },
+        "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": "49.8397",
+            "longitude": "24.0297"
+        },
+        "openingHoursSpecification": [
+            {
+                "@type": "OpeningHoursSpecification",
+                "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                "opens": "08:00",
+                "closes": "22:00"
+            }
+        ]
     }
     </script>
     
@@ -769,11 +798,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
                             <label for="name" class="sr-only">Твоє ім'я *</label>
-                            <input type="text" id="name" name="name" class="form-input" placeholder="Твоє ім'я *" required>
+                            <input type="text" id="name" name="name" class="form-input" placeholder="Твоє ім'я *" autocomplete="name" required>
                         </div>
                         <div>
                             <label for="phone" class="sr-only">Телефон *</label>
-                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+38 (0XX) XXX-XX-XX *" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required>
+                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+38 (0XX) XXX-XX-XX *" autocomplete="tel" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required>
                         </div>
                     </div>
                     

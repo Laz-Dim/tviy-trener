@@ -326,16 +326,32 @@
             
             <nav class="hidden lg:flex items-center gap-10">
                 <a href="index.html#about" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Філософія</a>
+                <a href="index.html#trainer" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Про тренера</a>
                 <a href="index.html#services" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Напрямки</a>
                 <a href="index.html#videos" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Відео</a>
                 <a href="index.html#blog" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Нотатки</a>
                 <a href="index.html#contacts" class="nav-link text-xs uppercase font-heading tracking-[0.18em] text-[var(--fg-dim)] hover:text-white transition-colors">Контакти</a>
             </nav>
             
-            <div>
-                <a href="index.html#registration" class="font-heading text-xs tracking-[0.2em] uppercase text-black bg-[var(--silver)] px-5 py-2.5 hover:bg-white transition-colors">
+            <div class="flex items-center gap-4">
+                <a href="#registration" class="font-heading text-xs tracking-[0.2em] uppercase text-black bg-[var(--silver)] px-5 py-2.5 hover:bg-white transition-colors font-semibold">
                     Записатись
                 </a>
+                <button id="mobileMenuBtn" class="lg:hidden text-[var(--fg)] text-xl p-1" aria-label="Меню">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu overlay -->
+        <div id="mobileMenu" class="hidden fixed inset-x-0 top-[65px] bg-black/95 border-b border-white/5 py-8 px-6 z-40 lg:hidden transition-all duration-300">
+            <div class="flex flex-col gap-6 font-heading text-lg tracking-[0.15em] uppercase text-center">
+                <a href="index.html#about" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Філософія</a>
+                <a href="index.html#trainer" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Про тренера</a>
+                <a href="index.html#services" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Напрямки</a>
+                <a href="index.html#videos" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Відео</a>
+                <a href="index.html#blog" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Нотатки</a>
+                <a href="index.html#contacts" class="mobile-nav-link text-[var(--fg-dim)] hover:text-white py-2">Контакти</a>
             </div>
         </div>
     </header>
@@ -345,8 +361,6 @@
         <div class="mb-10">
             <a href="index.html#blog" class="font-mono text-xs text-[var(--muted)] hover:text-[var(--accent)] transition-colors tracking-widest uppercase">
                 <i class="fas fa-arrow-left mr-2"></i> Назад до нотаток
-            </a>
-        </div>        </div>       <i class="fas fa-arrow-left mr-2"></i> Назад до нотаток
             </a>
         </div>
 
@@ -369,12 +383,15 @@
             </header>
             
             <!-- Article Image -->
-            <figure class="mb-10 overflow-hidden border border-white/10 notch-corner"><img src="https://tviy-trener.com/img_new/swimming.jpg" alt="✅ Чим корисне плавання та вода вцілому?🔥" class="w-full h-auto object-cover img-noir" loading="lazy"></figure>
+            <figure class="mb-10 overflow-hidden border border-white/10 notch-corner"><img src="img_new/swimming.jpg" alt="✅ Чим корисне плавання та вода вцілому?🔥" class="w-full h-auto object-cover img-noir" loading="lazy"></figure>
             
             <!-- Article Content -->
             <div class="blog-post-content my-12">
-                <p>Плавання — це унікальний формат тренувань, де тіло працює повністю, але без зайвого стресу. Вода створює природний опір, і кожен рух стає маленьким силовим вправлянням. Це сприяє одночасному зміцненню м’язів, формуванню правильної постави та розвитку витривалості. Кардіонавантаження у воді діє особливо м’яко. Серцево-судинна система працює рівніше, серце тренується під природним тиском води, а судини стають еластичнішими. У результаті поліпшується пульсовий контроль, дихання стає глибшим, а витривалість зростає як у тренажерному залі, так і в щоденній активності. Плавання значно впливає на роботу мозку. Поліпшене кровопостачання, контроль дихання та рівномірна робота м’язів активізують нервову систему. Це підвищує концентрацію, покращує швидкість реакції та координацію. Вода діє як природний антистрес — допомагає організму швидше відновлюватися після важких навантажень. Не менш важливий вплив на моторику: тренування у воді вдосконалюють відчуття балансу, точність рухів та роботу кінцівок. Це робить будь-які силові або вибухові вправи більш контрольованими та технічними. І, звичайно, естетика. Регулярні тренування у воді формують красивий силует: сильну спину, підтягнутий кор, рельєфні руки та ноги. Це природний спосіб поєднати здоров’я, силу та візуальну привабливість.</p>
-<h1>Чим корисне плавання та вода вцілому?</h1>
+                <p>Плавання — це унікальний формат тренувань, де тіло працює повністю, але без зайвого стресу. Вода створює природний опір, і кожен рух стає маленьким силовим тренуванням. Це сприяє одночасному зміцненню м’язів, формуванню правильної постави та розвитку витривалості.</p>
+<p>Кардіонавантаження у воді діє особливо м’яко. Серцево-судинна система працює рівніше, серце тренується під природним тиском води, а судини стають еластичнішими. У результаті поліпшується пульсовий контроль, дихання стає глибшим, а витривалість зростає як у тренажерному залі, так і в щоденній активності.</p>
+<p>Плавання значно впливає на роботу мозку. Поліпшене кровопостачання, контроль дихання та рівномірна робота м’язів активізують нервову систему. Це підвищує концентрацію, покращує швидкість реакції та координацію. Вода діє як природний антистрес — допомагає організму швидше відновлюватися після важких навантажень.</p>
+<p>Не менш важливий вплив на моторику: тренування у воді вдосконалюють відчуття балансу, точність рухів та роботу кінцівок. Це робить будь-які силові або вибухові вправи більш контрольованими та технічними.</p>
+<p>І, звичайно, естетика. Регулярні тренування у воді формують красивий силует: сильну спину, підтягнутий кор, рельєфні руки та ноги. Це природний спосіб поєднати здоров’я, силу та візуальну привабливість.</p>
 <p><strong>Вода — це життя</strong>. І для спортсмена вода стає найкращим другом.</p>
 <h2>Переваги плавання:</h2>
 <h3>1. Повне відновлення</h3>
@@ -386,10 +403,10 @@
 <h3>2. Кардіо без удару</h3>
 <ul>
 <li>Серце працює ефективно</li>
-<li>Жодних ударів по колінах таleo</li>
+<li>Жодних ударів по колінах та хребту</li>
 <li>Ідеальне для днів відновлення</li>
 </ul>
-<h3>3. Формування слегкої мускулатури</h3>
+<h3>3. Формування рельєфної мускулатури</h3>
 <ul>
 <li>Вода створює опір у всіх напрямках</li>
 <li>Працюють стабілізатори, які важко навантажити в залі</li>
@@ -401,7 +418,7 @@
 <li>Поєднуйте стилі: вільний, брас, на спині</li>
 <li>Використовуйте дошку для роботи ногами</li>
 </ul>
-<p><strong>Висновок</strong>: плавання — це не просто спорт, це інвестиція в довгість вашого спортивного життя.</p>
+<p><strong>Висновок</strong>: плавання — це не просто спорт, це інвестиція в довголіття вашого спортивного життя.</p>
             </div>
             
             <!-- Article Footer -->
@@ -446,11 +463,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
                             <label for="name" class="sr-only">Твоє ім'я *</label>
-                            <input type="text" id="name" name="name" class="form-input" placeholder="ТВОЄ ІМ'Я *" required>
+                            <input type="text" id="name" name="name" class="form-input" placeholder="ТВОЄ ІМ'Я *" autocomplete="name" required>
                         </div>
                         <div>
                             <label for="phone" class="sr-only">Телефон *</label>
-                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+38 (0XX) XXX-XX-XX *" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required>
+                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="+38 (0XX) XXX-XX-XX *" autocomplete="tel" inputmode="numeric" pattern="\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}" required>
                         </div>
                     </div>
 
@@ -489,6 +506,30 @@
     </footer>
 
     <script>
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                const icon = mobileMenuBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-bars');
+                    icon.classList.toggle('fa-times');
+                }
+            });
+            document.querySelectorAll('.mobile-nav-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    const icon = mobileMenuBtn.querySelector('i');
+                    if (icon) {
+                        icon.classList.add('fa-bars');
+                        icon.classList.remove('fa-times');
+                    }
+                });
+            });
+        }
+
         // Goal selector logic
         const goalPills = document.querySelectorAll('.goal-pill');
         let selectedGoalText = "Схуднення";
